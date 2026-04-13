@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppealAI — Diocesan Annual Appeal Optimizer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1e3a8a;
+    --navy-light: #2747a8;
+    --navy-hover: #16306f;
+    --slate: #1e3a8a;
+    --surface: #faf7f2;
+    --white: #ffffff;
+    --border: #d9dff0;
+    --text-primary: #1a1f36;
+    --text-secondary: #4a5170;
+    --text-muted: #8a90ad;
+    --accent: #1e3a8a;
+    --accent-light: #eaf0fb;
+    --accent-hover: #16306f;
+    --gold: #eab308;
+    --gold-light: #fdf6dc;
+    --red: #991b1b;
+    --red-light: #fbeaea;
+    --blue: #1e3a8a;
+    --blue-light: #eaf0fb;
+    --purple: #5b21b6;
+    --purple-light: #efeafc;
+    --orange: #b45309;
+    --orange-light: #fdf1de;
+    --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Fraunces', Georgia, serif;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--surface);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============ TOP NAV ============ */
+  .topnav {
+    background: var(--navy);
+    color: white;
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .topnav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topnav-logo {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), #12a18c);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; color: white;
+  }
+  .topnav-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: -0.3px;
+  }
+  .topnav-title span { color: var(--gold); opacity: 1; font-style: italic; }
+  .topnav-badge {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .topnav-right {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .topnav-diocese {
+    font-size: 13px; color: rgba(255,255,255,0.6);
+  }
+  .topnav-diocese strong { color: rgba(255,255,255,0.9); }
+  .topnav-user {
+    font-size: 12px;
+    color: rgba(255,255,255,0.95);
+    text-align: right;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+  .topnav-user span {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+  }
+  .topnav-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #e8b84d);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; color: var(--navy);
+  }
+
+  /* ============ TAB NAV ============ */
+  .tabnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    position: sticky;
+    top: 60px;
+    z-index: 99;
+  }
+  .tabnav-item {
+    padding: 16px 24px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .tabnav-item:hover { color: var(--text-secondary); }
+  .tabnav-item.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+  .tabnav-icon {
+    width: 18px; height: 18px; opacity: 0.6;
+  }
+  .tabnav-item.active .tabnav-icon { opacity: 1; }
+
+  /* ============ MAIN CONTENT ============ */
+  .main { padding: 28px 32px 60px; max-width: 1380px; margin: 0 auto; width: 100%; }
+
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: visible;
+  }
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%231e3a8a' stroke-width='1.2'><circle cx='20' cy='20' r='18'/><circle cx='20' cy='20' r='6'/><g><line x1='20' y1='2' x2='20' y2='38'/><line x1='4.4' y1='11' x2='35.6' y2='29'/><line x1='4.4' y1='29' x2='35.6' y2='11'/></g><g><circle cx='20' cy='8' r='3'/><circle cx='30.4' cy='14' r='3'/><circle cx='30.4' cy='26' r='3'/><circle cx='20' cy='32' r='3'/><circle cx='9.6' cy='26' r='3'/><circle cx='9.6' cy='14' r='3'/></g></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .card-subtitle {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .card-body { padding: 24px; }
+
+  /* ============ STAT BOXES ============ */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .stat-change {
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-change.up { color: var(--accent); }
+  .stat-change.down { color: var(--red); }
+
+  /* ============ SECTION HEADERS ============ */
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--surface); }
+  .btn-sm { padding: 7px 14px; font-size: 12.5px; }
+
+  /* ============ TABLES ============ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(14,124,107,0.02); }
+
+  /* ============ BADGES / TAGS ============ */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    gap: 5px;
+  }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-gold { background: var(--gold-light); color: var(--gold); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+
+  /* ============ SEGMENT CARDS ============ */
+  .segments-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .segment-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .segment-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .segment-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .segment-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-md);
+  }
+  .segment-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .segment-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .segment-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--surface);
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+  .segment-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 8px;
+  }
+  .segment-metric-label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .segment-metric-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .segment-desc {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .seg-green::before { background: var(--accent); }
+  .seg-blue::before { background: var(--blue); }
+  .seg-red::before { background: var(--red); }
+  .seg-gold::before { background: var(--gold); }
+  .seg-purple::before { background: var(--purple); }
+  .seg-orange::before { background: var(--orange); }
+
+  /* ============ AI INSIGHT BOX ============ */
+  .ai-insight {
+    background: linear-gradient(135deg, #fbf6e6, #f7eecb);
+    border: 1px solid #e6d28a;
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    margin-top: 20px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+  }
+  .ai-insight::before {
+    content: '✦ AI Insight';
+    position: absolute;
+    top: -12px; left: 20px;
+    background: var(--gold);
+    color: #3a2a00;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 4px 14px 4px 22px;
+    border-radius: 2px;
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%);
+    box-shadow: 0 2px 6px rgba(234,179,8,0.35);
+  }
+  .ai-insight-text {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-top: 4px;
+  }
+  .ai-insight-text strong { color: var(--text-primary); }
+
+  /* ============ CHARTS ============ */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .chart-container {
+    position: relative;
+    height: 260px;
+    padding: 8px;
+  }
+
+  /* ============ GOAL MODELING ============ */
+  .parish-row {
+    display: grid;
+    grid-template-columns: 200px 110px 120px 1fr 100px 90px;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    gap: 12px;
+  }
+  .parish-row.header {
+    background: var(--surface);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 10px 20px;
+  }
+  .parish-name { font-weight: 600; color: var(--text-primary); }
+  .goal-bar-track {
+    height: 8px;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .goal-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+  .goal-status {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* ============ SLIDERS ============ */
+  .model-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .control-group { }
+  .control-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .control-value {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(14,124,107,0.3);
+  }
+
+  /* ============ COMMS PANEL ============ */
+  .comm-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .config-select {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    color: var(--text-primary);
+    background: var(--white);
+    cursor: pointer;
+    width: 100%;
+  }
+  .config-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(14,124,107,0.1);
+  }
+  .config-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+
+  .letter-output {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 44px;
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    min-height: 200px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .letter-output .salutation {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+  .letter-output .closing {
+    margin-top: 24px;
+    font-style: italic;
+    color: var(--text-primary);
+  }
+  .letter-output .ask-amount {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .letter-output .highlight {
+    background: var(--gold-light);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .letter-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .letter-meta-item {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .letter-meta-item strong {
+    color: var(--text-secondary);
+  }
+
+  /* ============ LOADING ANIMATION ============ */
+  .loading-bar {
+    display: none;
+    height: 3px;
+    background: linear-gradient(90deg, #1e3a8a, #eab308, #1e3a8a);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease infinite;
+    margin: -1px 0 0 0;
+  }
+  .loading-bar.active { display: block; }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ============ TWO COL LAYOUT ============ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ============ FOOTER ============ */
+  .prototype-footer {
+    text-align: center;
+    padding: 30px 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .prototype-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1024px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .segments-grid { grid-template-columns: 1fr 1fr; }
+    .chart-row, .two-col, .model-controls, .comm-config { grid-template-columns: 1fr; }
+    .parish-row { grid-template-columns: 150px 90px 100px 1fr 90px 80px; font-size: 12.5px; }
+  }
+  @media (max-width: 768px) {
+    .main { padding: 20px 16px 40px; }
+    .topnav { padding: 0 16px; }
+    .tabnav { padding: 0 8px; overflow-x: auto; }
+    .tabnav-item { padding: 14px 16px; font-size: 12.5px; white-space: nowrap; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .segments-grid { grid-template-columns: 1fr; }
+    .parish-row { font-size: 11.5px; gap: 8px; padding: 12px 14px; grid-template-columns: 120px 80px 90px 1fr 80px 70px; }
+    .stat-value { font-size: 22px; }
+    .section-title { font-size: 20px; }
+    .letter-output { padding: 24px; }
+  }
+
+  /* ============ SCENARIO SUMMARY ============ */
+  .scenario-summary {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    color: white;
+    margin-bottom: 24px;
+  }
+  .scenario-summary-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+  }
+  .scenario-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .scenario-stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 6px;
+  }
+  .scenario-stat-value {
+    font-family: var(--font-display);
+    font-size: 26px;
+  }
+  .scenario-stat-value.positive { color: #fde047; }
+  .scenario-stat-value.negative { color: #fca5a5; }
+
+  @media (max-width: 768px) {
+    .scenario-stats { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .scenario-stat-value { font-size: 20px; }
+  }
+
+  /* ============ COMMS METRICS ============ */
+  .comm-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .comm-metric {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .comm-metric-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--text-primary);
+  }
+  .comm-metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 4px;
+  }
+  @media (max-width: 768px) {
+    .comm-metrics { grid-template-columns: 1fr 1fr; }
+  }
+
+  .typewriter { overflow: hidden; white-space: normal; }
+  .typewriter.animating p { animation: fadeUp 0.4s ease both; }
+  .typewriter.animating p:nth-child(1) { animation-delay: 0.1s; }
+  .typewriter.animating p:nth-child(2) { animation-delay: 0.5s; }
+  .typewriter.animating p:nth-child(3) { animation-delay: 0.9s; }
+  .typewriter.animating p:nth-child(4) { animation-delay: 1.3s; }
+  .typewriter.animating p:nth-child(5) { animation-delay: 1.7s; }
+  .typewriter.animating p:nth-child(6) { animation-delay: 2.1s; }
+  .typewriter.animating .closing { animation-delay: 2.5s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .gen-btn-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .gen-status {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .gen-status.done { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* ============ AI MODELED CHIP ============ */
+  .ai-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--gold);
+    color: #3a2a00;
+    font-family: var(--font-body);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(234,179,8,0.35);
+    vertical-align: middle;
+  }
+  .ai-chip::before { content: '✦'; font-size: 10px; }
+  .ai-chip.cobalt { background: var(--navy); color: #fff; box-shadow: 0 1px 3px rgba(30,58,138,0.35); }
+  .confidence-meter {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--text-muted); margin-top: 6px;
+  }
+  .confidence-bar { flex: 1; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+  .confidence-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--gold)); }
+
+  /* ============ MOTIVATION GRID ============ */
+  .motivation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .motivation-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--navy);
+    border-radius: 8px;
+    padding: 16px 18px;
+    transition: all 0.2s;
+  }
+  .motivation-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .motivation-segment { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .motivation-driver { font-family: var(--font-display); font-size: 17px; color: var(--navy); margin: 6px 0 4px; line-height: 1.25; }
+  .motivation-framing { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 8px; font-style: italic; }
+  @media (max-width: 900px) { .motivation-grid { grid-template-columns: 1fr; } }
+
+  /* ============ DONOR QUEUE ============ */
+  .donor-queue { display: flex; flex-direction: column; gap: 10px; }
+  .donor-row {
+    display: grid;
+    grid-template-columns: 56px 1.4fr 1fr 0.8fr 0.8fr;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.15s;
+  }
+  .donor-row:hover { border-color: var(--navy); box-shadow: var(--shadow-md); }
+  .donor-row.urgent { border-left: 3px solid var(--red); }
+  .donor-row.warm { border-left: 3px solid var(--gold); }
+  .health-score {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 17px; font-weight: 700;
+    color: #fff;
+  }
+  .health-score.high { background: #15803d; }
+  .health-score.mid { background: var(--gold); color: #3a2a00; }
+  .health-score.low { background: var(--red); }
+  .donor-name { font-weight: 600; font-size: 14px; color: var(--text-primary); }
+  .donor-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .donor-reason { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .donor-action { font-size: 12px; }
+  .donor-action strong { display: block; color: var(--navy); font-size: 12.5px; margin-bottom: 2px; }
+  .donor-lift { text-align: right; font-family: var(--font-display); font-size: 16px; color: #15803d; font-weight: 600; }
+  .donor-lift.churn { color: var(--red); }
+  .donor-lift small { display: block; font-family: var(--font-body); font-size: 10px; color: var(--text-muted); font-weight: 400; text-transform: uppercase; letter-spacing: 0.6px; }
+  @media (max-width: 900px) {
+    .donor-row { grid-template-columns: 56px 1fr; gap: 10px; }
+    .donor-row > div:nth-child(n+3) { grid-column: 2; }
+  }
+
+  /* ============ QUADRANT WRAPPER ============ */
+  .quadrant-wrap { position: relative; height: 360px; }
+
+
+  /* ============ AI COPILOT BAR ============ */
+  .copilot-bar {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .copilot-bar:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,138,0.08); }
+  .copilot-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--navy), #2747a8);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 18px; flex-shrink: 0;
+  }
+  .copilot-input {
+    flex: 1;
+    border: none; outline: none; background: none;
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--text-primary);
+  }
+  .copilot-input::placeholder { color: var(--text-muted); font-style: italic; }
+  .copilot-badge {
+    font-family: var(--font-body); font-size: 10px;
+    background: var(--gold-light); color: #7a5a00;
+    padding: 4px 10px; border-radius: 20px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    border: 1px solid #e6d28a;
+  }
+  .copilot-response {
+    display: none;
+    margin-top: 14px; padding: 16px 18px;
+    background: linear-gradient(135deg, #fbf6e6, #f7eecb);
+    border: 1px solid #e6d28a;
+    border-radius: 10px;
+    font-size: 13.5px; color: var(--text-secondary); line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+  }
+  .copilot-response.active { display: block; }
+  .copilot-response strong { color: var(--navy); }
+  .copilot-suggestions {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  }
+  .copilot-chip {
+    font-size: 11px; padding: 5px 11px; border-radius: 14px;
+    background: var(--surface); color: var(--text-secondary);
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copilot-chip:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  /* ============ TOOLTIPS ============ */
+  [data-tooltip] { position: relative; cursor: help; }
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #0f172a;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.45;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: normal;
+    width: max-content;
+    max-width: 260px;
+    text-align: left;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  [data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px); left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #0f172a;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s;
+    z-index: 1000;
+  }
+  [data-tooltip]:hover::after,
+  [data-tooltip]:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+  [data-tooltip]:hover::before { transform: translateX(-50%); }
+  .term-underline {
+    border-bottom: 1px dashed var(--navy);
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+
+  .modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,0.55); backdrop-filter:blur(4px); display:none; align-items:flex-start; justify-content:center; z-index:5000; padding:60px 20px 20px; overflow-y:auto; }
+  .modal-backdrop.active { display:flex; }
+  .modal { background:#fff; border-radius:14px; max-width:680px; width:100%; border:1px solid var(--border); box-shadow:0 20px 60px rgba(15,23,42,0.3); animation:modalIn 0.25s ease; }
+  @keyframes modalIn { from {opacity:0; transform:translateY(-16px);} to {opacity:1; transform:translateY(0);} }
+  .modal-header { padding:20px 26px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .modal-title { font-family:var(--font-display); font-size:22px; color:var(--navy); }
+  .modal-close { width:32px; height:32px; border-radius:8px; background:var(--surface); border:1px solid var(--border); cursor:pointer; font-size:18px; color:var(--text-muted); display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover { background:var(--red-light); color:var(--red); }
+  .modal-body { padding:22px 26px; font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+  .modal-body h4 { font-family:var(--font-display); color:var(--navy); font-size:15px; margin:16px 0 6px; font-weight:600; }
+  .modal-body h4:first-child { margin-top:0; }
+  .modal-body .kv { display:grid; grid-template-columns:140px 1fr; gap:6px 14px; margin:6px 0; }
+  .modal-body .kv dt { color:var(--text-muted); font-size:12px; }
+  .modal-body .kv dd { color:var(--text-primary); font-size:13px; font-weight:500; }
+  .modal-body ul { padding-left:20px; margin:6px 0; }
+  .modal-body li { margin:3px 0; }
+  .modal-footer { padding:16px 26px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+  .modal-btn { padding:9px 18px; border-radius:8px; border:1px solid var(--border); background:#fff; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+  .modal-btn:hover { border-color:var(--navy); }
+  .modal-btn.primary { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .modal-btn.primary:hover { background:var(--navy-hover); }
+  .modal-btn.danger { background:#fff; color:var(--red); border-color:var(--red); }
+  .modal-btn.danger:hover { background:var(--red-light); }
+  .modal-edit-area { width:100%; min-height:140px; margin-top:8px; padding:12px 14px; border:1px solid var(--border); border-radius:8px; font-family:var(--font-body); font-size:13px; color:var(--text-primary); resize:vertical; background:var(--surface); box-sizing:border-box; }
+  .motivation-card, .donor-row { cursor:pointer; }
+  .motivation-card::after { content:'Click for details →'; display:block; margin-top:10px; font-size:10.5px; color:var(--navy); font-weight:600; text-transform:uppercase; letter-spacing:0.6px; opacity:0.55; }
+  .motivation-card:hover::after { opacity:1; }
+  .filter-row { display:flex; gap:14px; margin-bottom:18px; flex-wrap:wrap; align-items:flex-end; }
+  .filter-group { display:flex; flex-direction:column; gap:5px; }
+  .filter-label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.7px; }
+  .filter-select { padding:10px 14px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:var(--font-body); font-size:13px; color:var(--text-primary); min-width:220px; cursor:pointer; }
+  .filter-select:focus { outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(30,58,138,0.08); }
+  .disabled-proto { opacity:0.55; cursor:not-allowed !important; }
+  .disabled-proto::before { content:'🔒 '; font-size:11px; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="topnav-logo">A</div>
+    <div class="topnav-title">Appeal<span>AI</span></div>
+    <div class="topnav-badge">Prototype</div>
+  </div>
+  <div class="topnav-right">
+    <div class="topnav-diocese">Diocese of <strong>St. Augustine</strong></div>
+    <div class="topnav-user">Maria Santos<br><span>Director of Stewardship</span></div>
+    <div class="topnav-avatar">MS</div>
+  </div>
+</nav>
+
+<!-- ===== TAB NAV ===== -->
+<div class="tabnav">
+  <div class="tabnav-item active" data-tab="segmentation">
+    <svg class="tabnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.3-6.7-2.8 2.8m-5.8 5.8-2.8 2.8m0-11.4 2.8 2.8m5.8 5.8 2.8 2.8"/></svg>
+    Donor Segmentation
+  </div>
+  <div class="tabnav-item" data-tab="modeling">
+    <svg class="tabnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 16 4-8 4 5 5-9"/></svg>
+    Parish Goal Modeling
+  </div>
+  <div class="tabnav-item" data-tab="motivation" data-tooltip="Predicted motivation drivers and capacity-vs-giving analysis per donor segment.">
+    <span class="tabnav-icon">✦</span>Donor Motivation
+  </div>
+  <div class="tabnav-item" data-tab="seasons" data-tooltip="Liturgical-season giving patterns and recommended ask-timing windows per parish.">
+    <span class="tabnav-icon">✦</span>Liturgical Seasons
+  </div>
+  <div class="tabnav-item" data-tab="relationships" data-tooltip="AI-ranked priority queue of donors needing personal outreach this week.">
+    <span class="tabnav-icon">✦</span>Relationships
+  </div>
+  <div class="tabnav-item" data-tab="comms">
+    <svg class="tabnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6m-8 4H8m8 4H8m2-8H8"/></svg>
+    AI Appeal Communications
+  </div>
+</div>
+
+<div class="loading-bar" id="loadingBar"></div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main">
+
+<!-- ======================= PANEL 1: SEGMENTATION ======================= -->
+<!-- ============ AI COPILOT BAR ============ -->
+<div class="copilot-bar">
+  <div class="copilot-icon">✦</div>
+  <input type="text" class="copilot-input" id="copilotInput"
+         placeholder="Ask AppealAI: 'Which donors should I visit this week?' or 'Show me Lenten giving trends'">
+  <span class="copilot-badge" data-tooltip="Natural language interface simulated for demo. Phase 2 will connect to a local LLM via Ollama over Tailscale.">AI Copilot · Demo</span>
+</div>
+<div class="copilot-response" id="copilotResponse"></div>
+<div class="copilot-suggestions">
+  <div class="copilot-chip" data-q="visit">Who should I visit this week?</div>
+  <div class="copilot-chip" data-q="lent">Show me Lenten giving trends</div>
+  <div class="copilot-chip" data-q="capacity">Find high-capacity lapsed donors</div>
+  <div class="copilot-chip" data-q="motivation">What motivates Faithful Stewards?</div>
+</div>
+
+<div class="panel active" id="panel-segmentation">
+
+  <div class="section-header">
+    <div class="section-title">Donor Intelligence</div>
+    <div class="section-desc">AI-powered segmentation of 487 active donors across 8 parishes for the 2026 Annual Bishop's Appeal.</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-label">Total Active Donors</div>
+      <div class="stat-value">487</div>
+      <div class="stat-change up">&#9650; 3.2% vs prior year</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Avg Annual Gift</div>
+      <div class="stat-value">$843</div>
+      <div class="stat-change down">&#9660; 1.8% vs prior year</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Recurring Givers</div>
+      <div class="stat-value">38%</div>
+      <div class="stat-change up">&#9650; 5.1% vs prior year</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label"><span data-tooltip="Forecast total for the 2026 Annual Appeal based on segment response curves, ask-amount optimization, and liturgical timing. 95% confidence interval: $395K–$428K.">Predicted Appeal Total</span></div>
+      <div class="stat-value">$411K</div>
+      <div class="stat-change up">&#9650; 7.3% vs prior year</div>
+    </div>
+  </div>
+
+  <div class="segments-grid">
+    <div class="segment-card seg-green active" data-segment="growers">
+      <div class="segment-card-header">
+        <span class="segment-name">Consistent Growers</span>
+        <span class="segment-count">73 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$1,240</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">YoY Growth</span>
+        <span class="segment-metric-value" style="color:var(--accent)">+14.2%</span>
+      </div>
+      <div class="segment-desc">Giving has increased for 3+ consecutive years. High engagement, frequent Mass attendance. Prime candidates for major gift cultivation.</div>
+    </div>
+
+    <div class="segment-card seg-blue" data-segment="faithful">
+      <div class="segment-card-header">
+        <span class="segment-name">Faithful Stewards</span>
+        <span class="segment-count">142 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$920</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">YoY Growth</span>
+        <span class="segment-metric-value">+1.3%</span>
+      </div>
+      <div class="segment-desc">Stable, reliable givers for 5+ years. Backbone of offertory. Strategy: affirm and deepen commitment. Low flight risk.</div>
+    </div>
+
+    <div class="segment-card seg-red" data-segment="atrisk">
+      <div class="segment-card-header">
+        <span class="segment-name">At-Risk Lapsers</span>
+        <span class="segment-count">56 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$485</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">YoY Growth</span>
+        <span class="segment-metric-value" style="color:var(--red)">-38.7%</span>
+      </div>
+      <div class="segment-desc">Previously strong donors with significant giving decline in last 6-12 months. Requires pastoral outreach. Highest recovery ROI.</div>
+    </div>
+
+    <div class="segment-card seg-gold" data-segment="untapped">
+      <div class="segment-card-header">
+        <span class="segment-name">High-Capacity Untapped</span>
+        <span class="segment-count">44 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$310</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Est. Capacity</span>
+        <span class="segment-metric-value" style="color:var(--gold)">$2,800+</span>
+      </div>
+      <div class="segment-desc">Active parishioners in top-quartile ZIP codes giving well below modeled capacity. Largest growth opportunity in the appeal.</div>
+    </div>
+
+    <div class="segment-card seg-purple" data-segment="new">
+      <div class="segment-card-header">
+        <span class="segment-name">New Parishioner Prospects</span>
+        <span class="segment-count">89 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$175</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Registered</span>
+        <span class="segment-metric-value">&lt;12 months</span>
+      </div>
+      <div class="segment-desc">Registered within the past year. First appeal cycle. Welcome series + low-barrier ask can establish giving habit early.</div>
+    </div>
+
+    <div class="segment-card seg-orange" data-segment="seasonal">
+      <div class="segment-card-header">
+        <span class="segment-name">Seasonal Givers</span>
+        <span class="segment-count">83 donors</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Avg Gift</span>
+        <span class="segment-metric-value">$220</span>
+      </div>
+      <div class="segment-metric">
+        <span class="segment-metric-label">Frequency</span>
+        <span class="segment-metric-value">2-4x / year</span>
+      </div>
+      <div class="segment-desc">Christmas and Easter givers primarily. Not on recurring. Opportunity: convert to monthly giving via Lenten appeal.</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Giving Trend by Segment</div>
+          <div class="card-subtitle">Trailing 12 months, monthly totals</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Segment Revenue Contribution</div>
+          <div class="card-subtitle">Projected 2026 appeal distribution</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-insight">
+    <div class="ai-insight-text">
+      <strong>Key Finding:</strong> Your 44 High-Capacity Untapped donors represent just 9% of your donor base but have an estimated <strong>$123,200 in unrealized annual giving potential</strong>. Based on ZIP code income data and peer-parish benchmarks, these donors are giving at approximately 11% of their modeled capacity. A targeted personal outreach campaign from the pastor — not a mass mailing — is predicted to increase their average gift by 3.2x. This single segment could add <strong>$85,000+</strong> to your appeal results. We recommend scheduling one-on-one conversations during the 4 weeks leading into Lent.
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 24px;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Top Recovery Opportunities</div>
+        <div class="card-subtitle">At-Risk Lapsers with highest recovery potential</div>
+      </div>
+      <span class="badge badge-red">&#9888; Action Required</span>
+    </div>
+    <div class="card-body" style="padding:0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Donor</th>
+            <th>Parish</th>
+            <th>Peak Annual Gift</th>
+            <th>Current Year</th>
+            <th>Decline</th>
+            <th>Years Active</th>
+            <th>Recommended Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary)">Rodriguez Family</td>
+            <td>St. Anthony of Padua</td>
+            <td>$2,400</td>
+            <td style="color:var(--red);font-weight:600">$600</td>
+            <td><span class="badge badge-red">-75%</span></td>
+            <td>8 years</td>
+            <td><span class="badge badge-gold">&#9742; Pastor Call</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary)">Michael & Theresa Walsh</td>
+            <td>Sacred Heart</td>
+            <td>$1,800</td>
+            <td style="color:var(--red);font-weight:600">$450</td>
+            <td><span class="badge badge-red">-75%</span></td>
+            <td>12 years</td>
+            <td><span class="badge badge-gold">&#9742; Pastor Call</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary)">Catherine Nguyen</td>
+            <td>Our Lady of Guadalupe</td>
+            <td>$3,600</td>
+            <td style="color:var(--red);font-weight:600">$1,200</td>
+            <td><span class="badge badge-red">-67%</span></td>
+            <td>6 years</td>
+            <td><span class="badge badge-purple">&#9993; Personal Letter</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary)">James O'Brien</td>
+            <td>Holy Family</td>
+            <td>$1,500</td>
+            <td style="color:var(--red);font-weight:600">$500</td>
+            <td><span class="badge badge-red">-67%</span></td>
+            <td>5 years</td>
+            <td><span class="badge badge-purple">&#9993; Personal Letter</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text-primary)">DiMarco Family</td>
+            <td>St. Michael the Archangel</td>
+            <td>$2,100</td>
+            <td style="color:var(--red);font-weight:600">$840</td>
+            <td><span class="badge badge-red">-60%</span></td>
+            <td>9 years</td>
+            <td><span class="badge badge-gold">&#9742; Pastor Call</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================= PANEL 2: GOAL MODELING ======================= -->
+<div class="panel" id="panel-modeling">
+
+  <div class="section-header">
+    <div class="section-title">Parish &amp; Deanery Goal Modeling</div>
+    <div class="section-desc">Filter by deanery or select an individual parish to see targeted stats, then adjust appeal formula weights to model scenarios before committing to parish goals.</div>
+  </div>
+
+  <div class="filter-row">
+    <div class="filter-group">
+      <label class="filter-label">Deanery</label>
+      <select class="filter-select" id="deaneryFilter">
+        <option value="all">All Deaneries (Diocesan view)</option>
+        <option value="north">North Deanery (3 parishes)</option>
+        <option value="central">Central Deanery (3 parishes)</option>
+        <option value="south">South Deanery (2 parishes)</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Parish</label>
+      <select class="filter-select" id="parishFilter">
+        <option value="all">All Parishes</option>
+        <option value="cathedral">Cathedral Basilica (Central)</option>
+        <option value="stmarys">St. Mary's (North)</option>
+        <option value="stjosephs">St. Joseph's (Central)</option>
+        <option value="sacredheart">Sacred Heart (South)</option>
+        <option value="holytrinity">Holy Trinity (North)</option>
+        <option value="stpatricks">St. Patrick's (Central)</option>
+        <option value="stannes">St. Anne's (North)</option>
+        <option value="stfrancis">St. Francis (South)</option>
+      </select>
+    </div>
+    <button class="modal-btn primary" id="viewParishBtn">View Parish Details</button>
+  </div>
+
+  <div class="model-controls">
+    <div class="card">
+      <div class="card-body">
+        <div class="control-group" style="margin-bottom:20px">
+          <div class="control-label">
+            Offertory Weight
+            <span class="control-value" id="offertoryWeightVal">60%</span>
+          </div>
+          <input type="range" id="offertoryWeight" min="0" max="100" value="60" oninput="updateModel()">
+        </div>
+        <div class="control-group" style="margin-bottom:20px">
+          <div class="control-label">
+            Prior Appeal History Weight
+            <span class="control-value" id="appealWeightVal">30%</span>
+          </div>
+          <input type="range" id="appealWeight" min="0" max="100" value="30" oninput="updateModel()">
+        </div>
+        <div class="control-group">
+          <div class="control-label">
+            Economic Index Adjustment
+            <span class="control-value" id="econWeightVal">10%</span>
+          </div>
+          <input type="range" id="econWeight" min="0" max="100" value="10" oninput="updateModel()">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="control-group" style="margin-bottom:20px">
+          <div class="control-label">
+            School Parish Discount
+            <span class="control-value" id="schoolDiscountVal">5%</span>
+          </div>
+          <input type="range" id="schoolDiscount" min="0" max="20" value="5" oninput="updateModel()">
+        </div>
+        <div class="control-group" style="margin-bottom:20px">
+          <div class="control-label">
+            Over-Goal Return to Parish
+            <span class="control-value" id="overGoalVal">50%</span>
+          </div>
+          <input type="range" id="overGoal" min="0" max="100" value="50" oninput="updateModel()">
+        </div>
+        <div class="control-group">
+          <div class="control-label">
+            Diocesan Target
+            <span class="control-value" id="diocesanTargetVal">$385,000</span>
+          </div>
+          <input type="range" id="diocesanTarget" min="300000" max="500000" step="5000" value="385000" oninput="updateModel()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-summary" id="scenarioSummary">
+    <div class="scenario-summary-title">Scenario Impact Summary</div>
+    <div class="scenario-stats">
+      <div>
+        <div class="scenario-stat-label">Total Goal Allocation</div>
+        <div class="scenario-stat-value" id="totalAlloc">$385,000</div>
+      </div>
+      <div>
+        <div class="scenario-stat-label">Predicted Revenue</div>
+        <div class="scenario-stat-value positive" id="predRevenue">$411,420</div>
+      </div>
+      <div>
+        <div class="scenario-stat-label">Predicted Surplus</div>
+        <div class="scenario-stat-value positive" id="predSurplus">+$26,420</div>
+      </div>
+      <div>
+        <div class="scenario-stat-label">Parishes At Risk</div>
+        <div class="scenario-stat-value" id="parishesAtRisk">2 of 8</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Parish Goal Breakdown</div>
+        <div class="card-subtitle">Modeled goals with predicted attainment probability</div>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="parish-row header">
+        <span>Parish</span>
+        <span>Offertory</span>
+        <span>Modeled Goal</span>
+        <span>Predicted Attainment</span>
+        <span>Probability</span>
+        <span>Status</span>
+      </div>
+      <div id="parishRows"></div>
+    </div>
+  </div>
+
+  <div class="ai-insight" style="margin-top:24px">
+    <div class="ai-insight-text">
+      <strong>Scenario Analysis:</strong> At current weights, <strong>St. Joseph</strong> and <strong>Our Lady of Guadalupe</strong> are modeled at a <strong>62% and 58% attainment probability</strong> respectively. St. Joseph's offertory has been flat while its ZIP code median income declined 4.2% year-over-year. Recommendation: reduce St. Joseph's goal by 12% and redistribute to Christ the King and Sacred Heart, which are tracking to exceed their targets. This rebalancing improves overall attainment confidence from 74% to 88% with no change to the diocesan total.
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================= PANEL 3: COMMUNICATIONS ======================= -->
+<div class="panel" id="panel-comms">
+
+  <div class="section-header">
+    <div class="section-title">AI Appeal Communications</div>
+    <div class="section-desc">Generate personalized, segment-aware appeal letters with AI-suggested ask amounts and liturgical context. Pastor review required before send.</div>
+  </div>
+
+  <div class="comm-metrics">
+    <div class="comm-metric">
+      <div class="comm-metric-value">487</div>
+      <div class="comm-metric-label">Total Recipients</div>
+    </div>
+    <div class="comm-metric">
+      <div class="comm-metric-value">6</div>
+      <div class="comm-metric-label">Segment Variants</div>
+    </div>
+    <div class="comm-metric">
+      <div class="comm-metric-value">34%</div>
+      <div class="comm-metric-label">Pred. Open Rate</div>
+    </div>
+    <div class="comm-metric">
+      <div class="comm-metric-value">$843</div>
+      <div class="comm-metric-label">Avg Suggested Ask</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-body">
+      <div class="comm-config">
+        <div>
+          <div class="config-label">Target Segment</div>
+          <select class="config-select" id="commSegment" onchange="updatePreview()">
+            <option value="growers">Consistent Growers (73)</option>
+            <option value="faithful">Faithful Stewards (142)</option>
+            <option value="atrisk">At-Risk Lapsers (56)</option>
+            <option value="untapped">High-Capacity Untapped (44)</option>
+            <option value="new">New Parishioner Prospects (89)</option>
+            <option value="seasonal">Seasonal Givers (83)</option>
+          </select>
+        </div>
+        <div>
+          <div class="config-label">Channel</div>
+          <select class="config-select" id="commChannel" onchange="updatePreview()">
+            <option value="letter">Formal Letter</option>
+            <option value="email">Email</option>
+            <option value="text">SMS / Text</option>
+          </select>
+        </div>
+        <div>
+          <div class="config-label">Liturgical Context</div>
+          <select class="config-select" id="commSeason" onchange="updatePreview()">
+            <option value="lent">Lent</option>
+            <option value="advent">Advent</option>
+            <option value="ordinary">Ordinary Time</option>
+            <option value="easter">Easter Season</option>
+          </select>
+        </div>
+      </div>
+      <div class="gen-btn-wrap">
+        <button class="btn btn-primary" id="generateBtn" onclick="generateLetter()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Generate Appeal Communication
+        </button>
+        <span class="gen-status" id="genStatus"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="letterContainer" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Generated Communication</div>
+          <div class="card-subtitle" id="letterSubtitle">Formal Letter &middot; Consistent Growers &middot; Lent</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm disabled-proto" data-tooltip="Inline editing is disabled in the prototype. Phase 2 will enable pastoral edits with version history.">&#9998; Edit</button>
+          <button class="btn btn-secondary btn-sm">&#128065; Pastor Review</button>
+          <button class="btn btn-primary btn-sm">&#10003; Approve & Queue</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="letter-output typewriter" id="letterOutput"></div>
+        <div class="letter-meta">
+          <div class="letter-meta-item">Segment: <strong id="metaSegment">Consistent Growers</strong></div>
+          <div class="letter-meta-item">Recipients: <strong id="metaRecipients">73</strong></div>
+          <div class="letter-meta-item">Avg Ask: <strong id="metaAsk">$1,450</strong></div>
+          <div class="letter-meta-item">Tone: <strong id="metaTone">Gratitude + Growth</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-insight" style="margin-top:20px">
+      <div class="ai-insight-text" id="commInsight">
+        <strong>Communication Strategy:</strong> For Consistent Growers, research shows that <strong>gratitude-first messaging</strong> outperforms need-based asks by 23%. This letter leads with specific impact attribution ("your giving helped fund...") before introducing the ask. The suggested amount of <strong>$1,450</strong> represents a 17% increase over the donor's current average — aggressive enough to capture growth, conservative enough to avoid sticker shock. Letters for this segment should be <strong>signed personally by the pastor</strong> for maximum response rate.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- ============ PILLAR 1: DONOR MOTIVATION INTELLIGENCE ============ -->
+<div class="panel" id="panel-motivation"><div class="section">
+  <div class="section-title">Donor Motivation Intelligence <span class="ai-chip" data-tooltip="This module is powered by a machine learning model trained on historical donor, parish, and liturgical data. Predictions are probabilistic, not deterministic.">AI Modeled</span></div>
+  <div class="section-desc">Predictive motivation profiles and capacity-vs-realization analysis. The model blends giving history, parish affiliation, life events, wealth signals, and engagement data to surface what actually moves each donor segment.</div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><div class="card-title">Predicted Motivation Profiles by Segment</div><span class="ai-chip cobalt" data-tooltip="Gradient Boosted Decision Trees classifier. 91% accuracy on a held-out validation set of 2,400 labeled donor-motivation pairs across 12 dioceses.">Gradient Boost · 91% accuracy</span></div>
+    <div class="card-body">
+      <div class="motivation-grid">
+        <div class="motivation-card">
+          <div class="motivation-segment">Faithful Stewards</div>
+          <div class="motivation-driver">Legacy & Remembrance</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:94%"></div></div><span>94%</span></div>
+          <div class="motivation-framing">"Honor a loved one's memory through this year's appeal." Lead with bequest language and memorial naming opportunities.</div>
+        </div>
+        <div class="motivation-card">
+          <div class="motivation-segment">Consistent Growers</div>
+          <div class="motivation-driver">Parish School Support</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:88%"></div></div><span>88%</span></div>
+          <div class="motivation-framing">"Your gift sends 14 children to Catholic school." Tie ask directly to tuition assistance and youth formation outcomes.</div>
+        </div>
+        <div class="motivation-card">
+          <div class="motivation-segment">Sacramental Families</div>
+          <div class="motivation-driver">Sacramental Milestones</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:91%"></div></div><span>91%</span></div>
+          <div class="motivation-framing">Time asks to First Communion (May) and Confirmation (April) windows. Reference family's recent sacramental events.</div>
+        </div>
+        <div class="motivation-card">
+          <div class="motivation-segment">Social Justice Donors</div>
+          <div class="motivation-driver">Catholic Charities & Outreach</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:89%"></div></div><span>89%</span></div>
+          <div class="motivation-framing">Lead with food pantry, refugee resettlement, and prison ministry outcomes. Avoid building/capital framing.</div>
+        </div>
+        <div class="motivation-card">
+          <div class="motivation-segment">Eucharistic Devotees</div>
+          <div class="motivation-driver">Vocations & Priestly Formation</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:86%"></div></div><span>86%</span></div>
+          <div class="motivation-framing">Frame around seminarian sponsorship and Eucharistic Revival initiatives. Strong response to bishop's personal letter.</div>
+        </div>
+        <div class="motivation-card">
+          <div class="motivation-segment">At-Risk Lapsers</div>
+          <div class="motivation-driver">Pastoral Reconnection Needed</div>
+          <div class="confidence-meter"><div class="confidence-bar"><div class="confidence-fill" style="width:78%"></div></div><span>78%</span></div>
+          <div class="motivation-framing">Motivation signal weak. AI recommends pastoral visit before any ask. Likely life event or parish friction in past 18 months.</div>
+        </div>
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-text"><strong>AI insight:</strong> Motivation has shifted measurably year-over-year. "Legacy & Remembrance" has grown 23% as a primary driver among Faithful Stewards (post-pandemic effect, aging cohort). Recommend reallocating 15% of mass-mailing budget toward planned-giving conversations and memorial naming opportunities — projected $87K incremental.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title">Capacity vs. Generosity Quadrant</div><span class="ai-chip" data-tooltip="Capacity estimated from publicly available wealth signals: real estate records, business ownership, philanthropic history, and census-tract income proxies.">Wealth Modeled</span></div>
+    <div class="card-body">
+      <div class="quadrant-wrap"><canvas id="quadrantChart"></canvas></div>
+      <div class="ai-insight">
+        <div class="ai-insight-text"><strong>AI insight:</strong> 47 donors sit in the upper-left "High Capacity, Low Realization" quadrant — these are giving less than 0.4% of modeled capacity. Top 10 alone represent <strong>$312K of untapped FY26 potential</strong>. Surfaced in the High-Touch Priority Queue below.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- ============ PILLAR 2: LITURGICAL SEASON INTELLIGENCE ============ -->
+<div class="panel" id="panel-seasons"><div class="section">
+  <div class="section-title">Liturgical Season Patterns <span class="ai-chip" data-tooltip="This module is powered by a machine learning model trained on historical donor, parish, and liturgical data. Predictions are probabilistic, not deterministic.">AI Modeled</span></div>
+  <div class="section-desc">Five-year giving patterns decomposed by liturgical season and parish. The model identifies seasonal lift coefficients and recommends optimal ask windows.</div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Giving by Liturgical Season &middot; Top 6 Parishes</div><span class="ai-chip cobalt" data-tooltip="Five years of weekly giving data decomposed into trend, seasonal, and residual components using STL decomposition per parish.">Time-Series Decomposition</span></div>
+    <div class="card-body">
+      <div class="chart-container" style="height:340px"><canvas id="liturgicalChart"></canvas></div>
+      <div class="ai-insight">
+        <div class="ai-insight-text"><strong>AI insight:</strong> <strong>St. Mary's</strong> shows a <strong>3.2x giving lift during Lent</strong> versus baseline — strongest seasonal signal in the diocese. Recommend front-loading FY26 ask to the Ash Wednesday window (Feb 18). <strong>Cathedral Basilica</strong> peaks at Christmas (2.1x lift) — schedule capital campaign push for Advent. <strong>Sacred Heart</strong> shows no seasonal pattern; treat as flat-rate year-round. Predicted incremental from re-timing alone: <strong>$54K</strong>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- ============ PILLAR 3: HIGH-TOUCH PRIORITY QUEUE ============ -->
+<div class="panel" id="panel-relationships"><div class="section">
+  <div class="section-title">High-Touch Priority Queue <span class="ai-chip" data-tooltip="Donors are ranked by predicted net impact (expected lift minus churn risk), recalculated nightly from CRM activity, Mass attendance, and engagement signals.">AI Ranked</span></div>
+  <div class="section-desc">Donors the model recommends for personal outreach this week. Each row includes a relationship health score, the trigger event, and the AI-recommended next-best-action.</div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">This Week's Top 8 &middot; Ranked by Predicted Net Impact</div><span class="ai-chip cobalt" data-tooltip="Queue refreshes every night at 2 AM using the prior day's CRM events, Mass attendance scans, and email engagement data.">Updated 2h ago</span></div>
+    <div class="card-body">
+      <div class="donor-queue">
+
+        <div class="donor-row urgent">
+          <div class="health-score low">38</div>
+          <div><div class="donor-name">Margaret &amp; Robert Chen</div><div class="donor-meta">St. Mary's &middot; Faithful Steward &middot; 22-yr donor</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Spouse passed Q3. Capacity intact. Motivation shift expected toward memorial giving.</div>
+          <div class="donor-action"><strong>In-person visit</strong>Pastor + Maria. Bring memorial naming brochure.</div>
+          <div class="donor-lift churn">−$18,400<small>Churn risk if no contact</small></div>
+        </div>
+
+        <div class="donor-row urgent">
+          <div class="health-score low">42</div>
+          <div><div class="donor-name">Dr. James Whitfield</div><div class="donor-meta">Cathedral Basilica &middot; High Capacity Lapser</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Modeled capacity $2.4M, gave $1,200 last cycle (0.05% realization). Lapsed 14 months.</div>
+          <div class="donor-action"><strong>Bishop call</strong>Vocations framing. Reference seminarian sponsorship.</div>
+          <div class="donor-lift">+$42,000<small>Predicted lift</small></div>
+        </div>
+
+        <div class="donor-row warm">
+          <div class="health-score mid">64</div>
+          <div><div class="donor-name">The Delgado Family</div><div class="donor-meta">St. Joseph's &middot; Sacramental Family</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Daughter's First Communion May 4. Historical 2.8x giving lift in sacramental month.</div>
+          <div class="donor-action"><strong>Handwritten note</strong>From Pastor. Reference Sofia's First Communion.</div>
+          <div class="donor-lift">+$3,200<small>Predicted lift</small></div>
+        </div>
+
+        <div class="donor-row warm">
+          <div class="health-score mid">58</div>
+          <div><div class="donor-name">Patricia O'Brien</div><div class="donor-meta">Holy Trinity &middot; Legacy Prospect</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> 78yo, no living children, owns home outright. Bequest probability 73%.</div>
+          <div class="donor-action"><strong>Planned-giving meeting</strong>Director of Stewardship. Bring estate counsel.</div>
+          <div class="donor-lift">+$185,000<small>Bequest expected value</small></div>
+        </div>
+
+        <div class="donor-row urgent">
+          <div class="health-score low">31</div>
+          <div><div class="donor-name">Anthony Russo</div><div class="donor-meta">St. Anne's &middot; Engagement Collapse</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Mass attendance dropped 80% in 6 months. Last 3 emails unopened. Possible parish friction.</div>
+          <div class="donor-action"><strong>Pastor home visit</strong>Pastoral, not financial. No ask this cycle.</div>
+          <div class="donor-lift churn">−$8,600<small>Churn risk if ignored</small></div>
+        </div>
+
+        <div class="donor-row warm">
+          <div class="health-score high">82</div>
+          <div><div class="donor-name">William &amp; Elena Park</div><div class="donor-meta">Cathedral Basilica &middot; Consistent Grower</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Liquidity event detected (business sale, public records). Capacity revised +340%.</div>
+          <div class="donor-action"><strong>Lunch with Bishop</strong>Capital project framing. Building &amp; legacy.</div>
+          <div class="donor-lift">+$95,000<small>Predicted lift</small></div>
+        </div>
+
+        <div class="donor-row warm">
+          <div class="health-score mid">61</div>
+          <div><div class="donor-name">The Murphy Trust</div><div class="donor-meta">St. Patrick's &middot; Foundation Donor</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Grant cycle opens April 30. Historical alignment: Catholic education, food security.</div>
+          <div class="donor-action"><strong>Formal LOI</strong>Development office. Tuition assistance proposal.</div>
+          <div class="donor-lift">+$50,000<small>Grant probability 78%</small></div>
+        </div>
+
+        <div class="donor-row warm">
+          <div class="health-score high">88</div>
+          <div><div class="donor-name">Thomas Caruso</div><div class="donor-meta">Sacred Heart &middot; Eucharistic Devotee</div></div>
+          <div class="donor-reason"><strong>Trigger:</strong> Daily-mass attendee, 12-yr consistent giver. High response to vocations framing.</div>
+          <div class="donor-action"><strong>Personal letter</strong>From Bishop. Eucharistic Revival ask.</div>
+          <div class="donor-lift">+$12,500<small>Predicted lift</small></div>
+        </div>
+
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-text"><strong>AI insight:</strong> Acting on all 8 recommendations this week is projected to net <strong>+$361,700</strong> (lift) and <strong>protect $27,000</strong> (churn avoided) versus the do-nothing baseline. The model recalculates the queue nightly using the prior day's mass attendance, email engagement, and parish CRM activity.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div><!-- end .main -->
+<div class="prototype-footer">
+  AppealAI Prototype &middot; Diocesan Annual Appeal Optimizer &middot; Product concept by <a href="https://johnsimpson.io" target="_blank">John Simpson</a>
+</div>
+
+<script>
+// ===== TAB NAVIGATION =====
+window.__charts = window.__charts || {};
+document.querySelectorAll('.tabnav-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tabnav-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel = document.getElementById('panel-' + tab.dataset.tab);
+    panel.classList.add('active');
+    setTimeout(() => { Object.values(window.__charts).forEach(c => { try { c.resize(); } catch(e){} }); }, 60);
+
+    // Show loading bar briefly
+    const bar = document.getElementById('loadingBar');
+    bar.classList.add('active');
+    setTimeout(() => bar.classList.remove('active'), 600);
+  });
+});
+
+// ===== SEGMENT CARDS =====
+document.querySelectorAll('.segment-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+  });
+});
+
+// ===== CHARTS =====
+const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+window.__charts.trend = new Chart(trendCtx, {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      {
+        label: 'Consistent Growers',
+        data: [6200,6400,6100,6800,7100,7400,7200,7600,8100,8400,8900,9200],
+        borderColor: '#1e3a8a',
+        backgroundColor: 'rgba(30,58,138,0.10)',
+        fill: true,
+        tension: 0.35,
+        borderWidth: 2,
+        pointRadius: 0,
+      },
+      {
+        label: 'Faithful Stewards',
+        data: [10800,10600,10900,10700,11000,10800,11200,11100,11400,11300,11500,11600],
+        borderColor: '#eab308',
+        backgroundColor: 'rgba(234,179,8,0.10)',
+        fill: true,
+        tension: 0.35,
+        borderWidth: 2,
+        pointRadius: 0,
+      },
+      {
+        label: 'At-Risk Lapsers',
+        data: [4800,4200,3800,3500,3100,2900,2700,2500,2300,2100,1950,1800],
+        borderColor: '#991b1b',
+        backgroundColor: 'rgba(153,27,27,0.08)',
+        fill: true,
+        tension: 0.35,
+        borderWidth: 2,
+        pointRadius: 0,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { boxWidth: 12, padding: 16, font: { family: "'DM Sans'", size: 11.5 } }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: v => '$' + (v/1000).toFixed(0) + 'K',
+          font: { family: "'DM Sans'", size: 11 },
+          color: '#8f95b2'
+        },
+        grid: { color: '#f0f2f8' }
+      },
+      x: {
+        ticks: { font: { family: "'DM Sans'", size: 11 }, color: '#8f95b2' },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+window.__charts.pie = new Chart(pieCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Consistent Growers','Faithful Stewards','At-Risk Lapsers','High-Capacity Untapped','New Prospects','Seasonal Givers'],
+    datasets: [{
+      data: [90520, 130640, 27160, 13640, 15575, 18260],
+      backgroundColor: ['#1e3a8a','#eab308','#991b1b','#5b21b6','#15803d','#b45309'],
+      borderWidth: 2,
+      borderColor: '#ffffff',
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          boxWidth: 10,
+          padding: 12,
+          font: { family: "'DM Sans'", size: 11 },
+          generateLabels: function(chart) {
+            const data = chart.data;
+            return data.labels.map((label, i) => ({
+              text: label + ' $' + (data.datasets[0].data[i]/1000).toFixed(0) + 'K',
+              fillStyle: data.datasets[0].backgroundColor[i],
+              hidden: false,
+              index: i
+            }));
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' $' + ctx.parsed.toLocaleString()
+        }
+      }
+    }
+  }
+});
+
+// ===== PARISH GOAL MODEL =====
+const parishes = [
+  { name: 'St. Anthony of Padua', offertory: 680000, priorAppeal: 72000, econIndex: 1.05, hasSchool: true, predicted: 0.91 },
+  { name: 'Sacred Heart', offertory: 520000, priorAppeal: 58000, econIndex: 1.02, hasSchool: false, predicted: 0.87 },
+  { name: 'Our Lady of Guadalupe', offertory: 340000, priorAppeal: 31000, econIndex: 0.91, hasSchool: false, predicted: 0.58 },
+  { name: 'St. Michael the Archangel', offertory: 490000, priorAppeal: 52000, econIndex: 1.08, hasSchool: true, predicted: 0.84 },
+  { name: 'Holy Family', offertory: 410000, priorAppeal: 44000, econIndex: 0.98, hasSchool: false, predicted: 0.79 },
+  { name: 'Christ the King', offertory: 620000, priorAppeal: 68000, econIndex: 1.12, hasSchool: true, predicted: 0.95 },
+  { name: 'St. Joseph', offertory: 290000, priorAppeal: 28000, econIndex: 0.88, hasSchool: false, predicted: 0.62 },
+  { name: 'Immaculate Conception', offertory: 380000, priorAppeal: 40000, econIndex: 1.01, hasSchool: false, predicted: 0.82 },
+];
+
+function updateModel() {
+  const offW = parseInt(document.getElementById('offertoryWeight').value);
+  const appW = parseInt(document.getElementById('appealWeight').value);
+  const econW = parseInt(document.getElementById('econWeight').value);
+  const schoolDisc = parseInt(document.getElementById('schoolDiscount').value);
+  const overGoal = parseInt(document.getElementById('overGoal').value);
+  const target = parseInt(document.getElementById('diocesanTarget').value);
+
+  document.getElementById('offertoryWeightVal').textContent = offW + '%';
+  document.getElementById('appealWeightVal').textContent = appW + '%';
+  document.getElementById('econWeightVal').textContent = econW + '%';
+  document.getElementById('schoolDiscountVal').textContent = schoolDisc + '%';
+  document.getElementById('overGoalVal').textContent = overGoal + '%';
+  document.getElementById('diocesanTargetVal').textContent = '$' + target.toLocaleString();
+
+  const totalWeight = offW + appW + econW || 1;
+  const offN = offW / totalWeight;
+  const appN = appW / totalWeight;
+  const econN = econW / totalWeight;
+
+  let rawScores = parishes.map(p => {
+    let score = (p.offertory * offN * 0.1) + (p.priorAppeal * appN) + (p.offertory * econN * 0.05 * p.econIndex);
+    if (p.hasSchool) score *= (1 - schoolDisc / 100);
+    return score;
+  });
+
+  const totalRaw = rawScores.reduce((a,b) => a + b, 0) || 1;
+
+  let html = '';
+  let atRiskCount = 0;
+  let totalPredicted = 0;
+
+  parishes.forEach((p, i) => {
+    const goal = Math.round((rawScores[i] / totalRaw) * target);
+    const predicted = Math.round(goal * p.predicted);
+    totalPredicted += predicted;
+    const pct = Math.round(p.predicted * 100);
+    const isAtRisk = p.predicted < 0.70;
+    if (isAtRisk) atRiskCount++;
+
+    const barColor = pct >= 85 ? 'var(--accent)' : pct >= 70 ? 'var(--gold)' : 'var(--red)';
+    const statusBadge = pct >= 85
+      ? '<span class="badge badge-green">On Track</span>'
+      : pct >= 70
+        ? '<span class="badge badge-gold">Monitor</span>'
+        : '<span class="badge badge-red">At Risk</span>';
+
+    html += `
+      <div class="parish-row">
+        <span class="parish-name">${p.name}${p.hasSchool ? ' <span style="font-size:10px;color:var(--text-muted);font-weight:400">&#127891;</span>' : ''}</span>
+        <span>$${(p.offertory/1000).toFixed(0)}K</span>
+        <span style="font-weight:600;color:var(--text-primary)">$${goal.toLocaleString()}</span>
+        <span>
+          <div class="goal-bar-track">
+            <div class="goal-bar-fill" style="width:${Math.min(pct,100)}%;background:${barColor}"></div>
+          </div>
+        </span>
+        <span class="goal-status" style="color:${barColor}">${pct}%</span>
+        <span>${statusBadge}</span>
+      </div>`;
+  });
+
+  document.getElementById('parishRows').innerHTML = html;
+
+  const surplus = totalPredicted - target;
+  document.getElementById('totalAlloc').textContent = '$' + target.toLocaleString();
+  document.getElementById('predRevenue').textContent = '$' + totalPredicted.toLocaleString();
+  document.getElementById('predSurplus').textContent = (surplus >= 0 ? '+' : '') + '$' + surplus.toLocaleString();
+  document.getElementById('predSurplus').className = 'scenario-stat-value ' + (surplus >= 0 ? 'positive' : 'negative');
+  document.getElementById('parishesAtRisk').textContent = atRiskCount + ' of 8';
+  document.getElementById('parishesAtRisk').className = 'scenario-stat-value' + (atRiskCount > 2 ? ' negative' : '');
+}
+
+updateModel();
+
+// ===== COMMUNICATIONS =====
+const letters = {
+  growers: {
+    letter: {
+      lent: {
+        salutation: 'Dear Maria and Carlos,',
+        body: [
+          'As we enter this holy season of Lent, I want to begin with two words that come from the heart: <em>thank you</em>.',
+          'Over the past six years, your faithful and growing generosity to St. Anthony of Padua has helped us expand our youth ministry program from 40 to 140 families served. Your commitment is not just financial — it is a witness to the Gospel call to stewardship that inspires our entire parish community.',
+          'This year, as part of the Bishop\'s Annual Appeal, I am personally reaching out to the families whose generosity has made the greatest difference. <span class="highlight">Your giving has grown each year, and that pattern of deepening commitment is exactly what allows us to plan boldly for the future.</span>',
+          'For the 2026 Appeal, I would like to invite you to consider a gift of <span class="ask-amount">$1,450</span> — an amount that reflects both your generous spirit and the growing needs of our diocesan family. Your gift will directly fund seminarian education, Catholic Charities outreach, and our parish school scholarship program.',
+          'This Lent, as we reflect on sacrifice and renewal, know that your stewardship is a living expression of both. I would welcome the opportunity to share a coffee with you after Mass to discuss how your family\'s continued partnership can help shape the next chapter of our parish story.',
+        ],
+        closing: 'With gratitude and prayers,<br>Fr. Thomas Brennan<br>Pastor, St. Anthony of Padua',
+        ask: '$1,450',
+        tone: 'Gratitude + Growth',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      advent: {
+        salutation: 'Dear Maria and Carlos,',
+        body: [
+          'As the Advent candles remind us of the light Christ brings into the world, I find myself reflecting on the many ways your family has been a light to our parish community.',
+          'Your faithful and growing support of St. Anthony of Padua over these past six years has been nothing short of remarkable. The youth ministry program you helped build now serves 140 families — up from just 40 when your journey with us began.',
+          'As we prepare to celebrate the joy of Christmas and the hope of a new year, I am writing to invite you to continue this journey through the Bishop\'s Annual Appeal. <span class="highlight">Your consistent generosity tells me you care deeply about the mission of the Church beyond our parish walls.</span>',
+          'Would you consider a gift of <span class="ask-amount">$1,450</span> to this year\'s Appeal? This investment will support seminarian formation, expand Catholic Charities services, and fund school scholarships for families in need across our diocese.',
+          'Your witness of growing generosity is itself a gift to this community. Thank you for all you have done and all you will do.',
+        ],
+        closing: 'With Advent blessings,<br>Fr. Thomas Brennan<br>Pastor, St. Anthony of Padua',
+        ask: '$1,450',
+        tone: 'Joy + Invitation',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      ordinary: {
+        salutation: 'Dear Maria and Carlos,',
+        body: [
+          'I hope this letter finds your family well and thriving in faith. I am writing to you personally because your support of St. Anthony of Padua over the past six years has been extraordinary.',
+          'You may not see the full picture from the pews, but I want you to know: your growing generosity helped our youth ministry expand from 40 to 140 families served. That kind of impact is only possible when families like yours commit year after year.',
+          'The Bishop\'s Annual Appeal is how we extend that same spirit of stewardship beyond our parish to the broader diocesan family. <span class="highlight">Seminarian education, Catholic Charities, parish school scholarships — these are the shared ministries that no single parish can fund alone.</span>',
+          'This year, I would be grateful if you would consider a gift of <span class="ask-amount">$1,450</span>. This reflects the trajectory of your generosity and the growing needs of our diocese.',
+          'I would love to sit down with you and share more about the specific impact your support makes possible. Please don\'t hesitate to reach out.',
+        ],
+        closing: 'In Christ,<br>Fr. Thomas Brennan<br>Pastor, St. Anthony of Padua',
+        ask: '$1,450',
+        tone: 'Gratitude + Growth',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      easter: {
+        salutation: 'Dear Maria and Carlos,',
+        body: [
+          'Christ is Risen — and with the joy of Easter still echoing in our hearts, I want to share with you some of the fruit your faithful stewardship has produced.',
+          'Your six years of growing generosity to St. Anthony of Padua have been transformational. Our youth ministry now serves 140 families. Our RCIA program welcomed 12 new members this Easter Vigil. These are not just statistics — they are souls touched, in part, because of your faithfulness.',
+          'In that Easter spirit of new life and abundance, I am reaching out about the Bishop\'s Annual Appeal. <span class="highlight">Your consistent pattern of growth in giving tells me your heart is aligned with the mission of the Church — both here at St. Anthony\'s and across the diocese.</span>',
+          'Would you prayerfully consider a gift of <span class="ask-amount">$1,450</span> to this year\'s Appeal? Every dollar supports seminarian education, Catholic Charities, and parish school scholarships.',
+          'Thank you for being a cornerstone of this community. It is a privilege to serve alongside you.',
+        ],
+        closing: 'He is Risen Indeed,<br>Fr. Thomas Brennan<br>Pastor, St. Anthony of Padua',
+        ask: '$1,450',
+        tone: 'Celebration + Momentum',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      }
+    },
+    email: {
+      lent: {
+        salutation: 'Maria and Carlos —',
+        body: [
+          'Quick personal note as we head into Lent. I don\'t say this lightly: your family\'s generosity over the past six years has been one of the most meaningful blessings to our St. Anthony\'s community.',
+          'The youth ministry you helped grow now serves 140 families. That\'s real, tangible impact from your faithfulness.',
+          'This year\'s Bishop\'s Annual Appeal is underway, and I wanted to personally invite you to consider a gift of <span class="ask-amount">$1,450</span>. It supports seminarian education, Catholic Charities, and school scholarships across our diocese.',
+          '<span class="highlight">I\'d love to grab coffee after Mass and share more about where your support goes.</span> Just reply to this email and we\'ll find a time.',
+        ],
+        closing: 'With gratitude,<br>Fr. Thomas Brennan',
+        ask: '$1,450',
+        tone: 'Warm + Direct',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      advent: {
+        salutation: 'Maria and Carlos —',
+        body: [
+          'As we light the Advent wreath this week, I wanted to send a quick but heartfelt thank you.',
+          'Your growing support over six years has helped our youth ministry reach 140 families. That transformation is a direct result of your faithfulness.',
+          'As you plan year-end giving, would you consider a gift of <span class="ask-amount">$1,450</span> to the Bishop\'s Annual Appeal? <span class="highlight">It funds seminarian formation, Catholic Charities, and school scholarships — the shared mission of our diocese.</span>',
+          'Wishing your family a blessed and peaceful Advent season.',
+        ],
+        closing: 'In Christ,<br>Fr. Thomas Brennan',
+        ask: '$1,450',
+        tone: 'Warm + Seasonal',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      ordinary: {
+        salutation: 'Maria and Carlos —',
+        body: [
+          'Hope you and the family are doing well. Wanted to reach out personally about the Bishop\'s Annual Appeal.',
+          'Your six years of growing generosity to St. Anthony\'s has been remarkable — our youth ministry now serves 140 families because of supporters like you.',
+          'Would you consider a gift of <span class="ask-amount">$1,450</span> to this year\'s Appeal? <span class="highlight">It directly funds seminarian education, Catholic Charities outreach, and parish school scholarships.</span>',
+          'Happy to share more details over coffee after Mass. Just reply and we\'ll set something up.',
+        ],
+        closing: 'With gratitude,<br>Fr. Thomas Brennan',
+        ask: '$1,450',
+        tone: 'Casual + Direct',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      easter: {
+        salutation: 'Maria and Carlos —',
+        body: [
+          'He is Risen! What an incredible Easter season at St. Anthony\'s — 12 new members at the Vigil.',
+          'Your growing support over six years helped make this community what it is. The youth ministry alone now serves 140 families.',
+          'In this season of joy, I\'m reaching out about the Bishop\'s Annual Appeal. <span class="highlight">Would you prayerfully consider a gift of <span class="ask-amount">$1,450</span>?</span> It supports seminarian education, Catholic Charities, and school scholarships.',
+          'Thank you for being a cornerstone of this parish. It means more than you know.',
+        ],
+        closing: 'Joyfully,<br>Fr. Thomas Brennan',
+        ask: '$1,450',
+        tone: 'Joyful + Gratitude',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      }
+    },
+    text: {
+      lent: {
+        salutation: '',
+        body: [
+          'Hi Maria & Carlos — Fr. Brennan here. As Lent begins, I want to thank you for 6 years of faithful and growing support of St. Anthony\'s. Your generosity helped our youth ministry grow to serve 140 families.',
+          'This year\'s Bishop\'s Appeal is underway. Would you consider a gift of <span class="ask-amount">$1,450</span>? It funds seminarian education, Catholic Charities & school scholarships. Link to give: <span style="color:var(--blue);text-decoration:underline">appeal.diocese-staugustine.org/give</span>',
+        ],
+        closing: 'God bless — Fr. Brennan',
+        ask: '$1,450',
+        tone: 'Brief + Personal',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      advent: {
+        salutation: '',
+        body: [
+          'Hi Maria & Carlos — Fr. Brennan. Blessed Advent! A quick thank you for your 6 years of growing generosity to St. Anthony\'s. You\'ve helped our youth ministry serve 140 families.',
+          'As you plan year-end giving, please consider <span class="ask-amount">$1,450</span> to the Bishop\'s Appeal: <span style="color:var(--blue);text-decoration:underline">appeal.diocese-staugustine.org/give</span>',
+        ],
+        closing: 'Peace — Fr. Brennan',
+        ask: '$1,450',
+        tone: 'Brief + Seasonal',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      ordinary: {
+        salutation: '',
+        body: [
+          'Hi Maria & Carlos — Fr. Brennan. Quick note to say thank you for your faithful support of St. Anthony\'s. Your generosity over 6 years has been remarkable.',
+          'Bishop\'s Annual Appeal is open. Would you consider <span class="ask-amount">$1,450</span>? Funds seminarian education, Catholic Charities & school scholarships. <span style="color:var(--blue);text-decoration:underline">appeal.diocese-staugustine.org/give</span>',
+        ],
+        closing: 'God bless — Fr. Brennan',
+        ask: '$1,450',
+        tone: 'Brief + Direct',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      },
+      easter: {
+        salutation: '',
+        body: [
+          'He is Risen! Maria & Carlos — Fr. Brennan here. What an Easter season. Thank you for 6 years of growing support. Your faithfulness helped our youth ministry serve 140 families.',
+          'Bishop\'s Appeal: prayerfully consider <span class="ask-amount">$1,450</span>? <span style="color:var(--blue);text-decoration:underline">appeal.diocese-staugustine.org/give</span>',
+        ],
+        closing: 'Joyful Easter blessings — Fr. Brennan',
+        ask: '$1,450',
+        tone: 'Brief + Joyful',
+        recipients: 73,
+        segment: 'Consistent Growers'
+      }
+    }
+  },
+  atrisk: {
+    letter: {
+      lent: {
+        salutation: 'Dear Michael and Theresa,',
+        body: [
+          'I want to begin this letter not with an ask, but with a simple truth: your family has meant more to Sacred Heart parish than you may realize.',
+          'For over a decade, your generosity helped sustain our food pantry, fund our building restoration, and support our outreach to homebound parishioners. Those twelve years of faithful giving built something lasting in this community.',
+          'I\'ve noticed your engagement has shifted recently, and I want you to know — <span class="highlight">whatever the reason, there is no judgment here. Life brings seasons of abundance and seasons of challenge, and the Church walks with you through both.</span>',
+          'As Lent invites us into reflection and renewal, I want to personally invite you back into the life of the Appeal — at whatever level feels right for your family. Even a gift of <span class="ask-amount">$500</span> would carry deep meaning and help sustain the ministries you helped build.',
+          'More than anything, I miss seeing you. If there\'s something our parish can do for your family, my door is always open.',
+        ],
+        closing: 'With care and prayers,<br>Fr. David Kim<br>Pastor, Sacred Heart',
+        ask: '$500',
+        tone: 'Pastoral + Reconnection',
+        recipients: 56,
+        segment: 'At-Risk Lapsers'
+      },
+      advent: {
+        salutation: 'Dear Michael and Theresa,',
+        body: [
+          'As Advent begins and we prepare our hearts for Christ\'s coming, I find myself thinking of the families who have shaped Sacred Heart into the community it is today. Your family is near the top of that list.',
+          'For over twelve years, your generosity sustained our food pantry, supported building restoration, and funded outreach to homebound parishioners. That legacy of faithfulness does not go unnoticed.',
+          'I understand that life brings seasons of change. <span class="highlight">Whatever your family is navigating, please know that this parish is here for you — not because of what you give, but because of who you are to us.</span>',
+          'This Advent, I gently invite you to consider a gift of <span class="ask-amount">$500</span> to the Bishop\'s Annual Appeal. But even more than that, I invite you back — to Mass, to community, to the family of faith that has missed you.',
+        ],
+        closing: 'With warmth and hope,<br>Fr. David Kim<br>Pastor, Sacred Heart',
+        ask: '$500',
+        tone: 'Gentle + Welcoming',
+        recipients: 56,
+        segment: 'At-Risk Lapsers'
+      },
+      ordinary: {
+        salutation: 'Dear Michael and Theresa,',
+        body: [
+          'I hope this letter finds you well. I\'m writing personally because your family holds a special place in the story of Sacred Heart parish.',
+          'Twelve years of faithful generosity — supporting our food pantry, building restoration, homebound outreach — that kind of sustained commitment shapes a community in ways that are hard to overstate.',
+          '<span class="highlight">I\'ve noticed a shift in your engagement recently, and I simply want you to know: whatever the season your family is in, Sacred Heart is your home.</span>',
+          'The Bishop\'s Annual Appeal is underway. If you\'re able, a gift of <span class="ask-amount">$500</span> would mean a great deal. But honestly, I would love even more to simply reconnect. Coffee after Mass? My door is open.',
+        ],
+        closing: 'Thinking of you,<br>Fr. David Kim<br>Pastor, Sacred Heart',
+        ask: '$500',
+        tone: 'Pastoral + Reconnection',
+        recipients: 56,
+        segment: 'At-Risk Lapsers'
+      },
+      easter: {
+        salutation: 'Dear Michael and Theresa,',
+        body: [
+          'The joy of Easter is a reminder that renewal is always possible. As I reflect on the parish community that celebrated together this season, I thought of your family.',
+          'For twelve years, your generosity built Sacred Heart into what it is — the food pantry, the building restoration, the homebound ministry. That legacy endures.',
+          '<span class="highlight">Whatever season your family is walking through, Easter reminds us that no chapter is the final chapter.</span> We miss you, and the door is always open.',
+          'If you\'re able to support this year\'s Bishop\'s Appeal, a gift of <span class="ask-amount">$500</span> would be a beautiful continuation of the story you\'ve helped write. But your presence matters most of all.',
+        ],
+        closing: 'With Easter hope,<br>Fr. David Kim<br>Pastor, Sacred Heart',
+        ask: '$500',
+        tone: 'Hopeful + Renewal',
+        recipients: 56,
+        segment: 'At-Risk Lapsers'
+      }
+    },
+    email: { lent: null, advent: null, ordinary: null, easter: null },
+    text: { lent: null, advent: null, ordinary: null, easter: null }
+  },
+  faithful: {
+    letter: { lent: null, advent: null, ordinary: null, easter: null },
+    email: { lent: null, advent: null, ordinary: null, easter: null },
+    text: { lent: null, advent: null, ordinary: null, easter: null }
+  },
+  untapped: {
+    letter: { lent: null, advent: null, ordinary: null, easter: null },
+    email: { lent: null, advent: null, ordinary: null, easter: null },
+    text: { lent: null, advent: null, ordinary: null, easter: null }
+  },
+  new: {
+    letter: { lent: null, advent: null, ordinary: null, easter: null },
+    email: { lent: null, advent: null, ordinary: null, easter: null },
+    text: { lent: null, advent: null, ordinary: null, easter: null }
+  },
+  seasonal: {
+    letter: { lent: null, advent: null, ordinary: null, easter: null },
+    email: { lent: null, advent: null, ordinary: null, easter: null },
+    text: { lent: null, advent: null, ordinary: null, easter: null }
+  }
+};
+
+// Fallback data for segments without full letters
+const segmentMeta = {
+  growers: { ask: '$1,450', tone: 'Gratitude + Growth', recipients: 73, name: 'Consistent Growers' },
+  faithful: { ask: '$1,050', tone: 'Affirmation + Deepening', recipients: 142, name: 'Faithful Stewards' },
+  atrisk: { ask: '$500', tone: 'Pastoral + Reconnection', recipients: 56, name: 'At-Risk Lapsers' },
+  untapped: { ask: '$2,000', tone: 'Vision + Invitation', recipients: 44, name: 'High-Capacity Untapped' },
+  new: { ask: '$250', tone: 'Welcome + Low Barrier', recipients: 89, name: 'New Parishioner Prospects' },
+  seasonal: { ask: '$400', tone: 'Encouragement + Recurring', recipients: 83, name: 'Seasonal Givers' }
+};
+
+const commInsights = {
+  growers: '<strong>Communication Strategy:</strong> For Consistent Growers, research shows that <strong>gratitude-first messaging</strong> outperforms need-based asks by 23%. This letter leads with specific impact attribution ("your giving helped fund...") before introducing the ask. The suggested amount of <strong>$1,450</strong> represents a 17% increase over the donor\'s current average — aggressive enough to capture growth, conservative enough to avoid sticker shock. Letters for this segment should be <strong>signed personally by the pastor</strong> for maximum response rate.',
+  faithful: '<strong>Communication Strategy:</strong> Faithful Stewards respond best to <strong>affirmation and belonging</strong> messaging. Avoid "we need more" framing. Instead, affirm their consistency, then paint a vision of what sustained giving makes possible. Suggested ask of <strong>$1,050</strong> represents a modest 7% increase. This segment has the <strong>lowest churn rate</strong> (3.2%) — the goal is retention, not aggressive growth.',
+  atrisk: '<strong>Communication Strategy:</strong> At-Risk Lapsers require a fundamentally different approach. <strong>Do not lead with money.</strong> Lead with relationship and pastoral care. The suggested ask of <strong>$500</strong> is intentionally lower than their historical average — the goal is re-engagement, not recovery of full giving. <strong>Personal phone calls from the pastor</strong> have a 4.1x higher re-engagement rate than letters alone for this segment.',
+  untapped: '<strong>Communication Strategy:</strong> High-Capacity Untapped donors are your <strong>largest growth opportunity</strong>. These are active, engaged parishioners giving far below their modeled capacity. The $2,000 ask may seem bold, but peer-giving data shows this is <strong>within the lower third of what comparable households give</strong> at peer parishes. A personal meeting invitation from the pastor converts at 38% for this segment — significantly higher than any written communication.',
+  new: '<strong>Communication Strategy:</strong> New Parishioner Prospects are in their first appeal cycle. The goal is <strong>establishing a giving habit</strong>, not maximizing amount. A <strong>$250 entry-level ask</strong> with a one-tap recurring giving option converts 28% of new registrants into recurring donors within the first year. Include a "welcome to the parish family" message that precedes and frames the ask. This segment responds best to <strong>digital channels</strong> (email and text) over formal letters.',
+  seasonal: '<strong>Communication Strategy:</strong> Seasonal Givers need a clear, compelling reason to increase frequency. <strong>Frame recurring giving as a spiritual discipline</strong>, not a financial transaction. The Lenten season is the highest-conversion window for converting seasonal givers to monthly. A suggested ask of <strong>$35/month ($400 annual equivalent)</strong> frames the commitment as manageable while nearly doubling their annual contribution. Include a <strong>"set it and forget it" recurring giving link</strong> as the primary CTA.'
+};
+
+function generateLetter() {
+  const seg = document.getElementById('commSegment').value;
+  const ch = document.getElementById('commChannel').value;
+  const season = document.getElementById('commSeason').value;
+  const btn = document.getElementById('generateBtn');
+  const status = document.getElementById('genStatus');
+
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  status.textContent = 'Analyzing donor segment...';
+  status.className = 'gen-status';
+
+  const bar = document.getElementById('loadingBar');
+  bar.classList.add('active');
+
+  setTimeout(() => {
+    status.textContent = 'Generating personalized communication...';
+  }, 800);
+
+  setTimeout(() => {
+    bar.classList.remove('active');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    status.textContent = 'Communication generated successfully';
+    status.className = 'gen-status done';
+
+    const container = document.getElementById('letterContainer');
+    container.style.display = 'block';
+
+    const data = letters[seg]?.[ch]?.[season];
+    const meta = segmentMeta[seg];
+
+    const channelLabel = ch === 'letter' ? 'Formal Letter' : ch === 'email' ? 'Email' : 'SMS';
+    const seasonLabel = season.charAt(0).toUpperCase() + season.slice(1);
+    document.getElementById('letterSubtitle').textContent = channelLabel + ' \u00b7 ' + meta.name + ' \u00b7 ' + seasonLabel;
+
+    if (data) {
+      let html = '';
+      if (data.salutation) html += '<p class="salutation">' + data.salutation + '</p>';
+      data.body.forEach(p => { html += '<p style="margin-bottom:14px">' + p + '</p>'; });
+      html += '<div class="closing">' + data.closing + '</div>';
+
+      const output = document.getElementById('letterOutput');
+      output.innerHTML = html;
+      output.classList.remove('animating');
+      void output.offsetWidth;
+      output.classList.add('animating');
+
+      document.getElementById('metaSegment').textContent = data.segment || meta.name;
+      document.getElementById('metaRecipients').textContent = data.recipients || meta.recipients;
+      document.getElementById('metaAsk').textContent = data.ask || meta.ask;
+      document.getElementById('metaTone').textContent = data.tone || meta.tone;
+    } else {
+      const output = document.getElementById('letterOutput');
+      output.innerHTML = '<p style="color:var(--text-muted);font-style:italic;text-align:center;padding:40px 0;">In the full product, this combination (' + meta.name + ' + ' + channelLabel + ' + ' + seasonLabel + ') would be generated by the AI engine in real-time.<br><br>This prototype includes pre-built examples for <strong>Consistent Growers</strong> (all channels and seasons) and <strong>At-Risk Lapsers</strong> (formal letter, all seasons).<br><br>Select one of those combinations to see the full output.</p>';
+      output.classList.remove('animating');
+
+      document.getElementById('metaSegment').textContent = meta.name;
+      document.getElementById('metaRecipients').textContent = meta.recipients;
+      document.getElementById('metaAsk').textContent = meta.ask;
+      document.getElementById('metaTone').textContent = meta.tone;
+    }
+
+    document.getElementById('commInsight').innerHTML = commInsights[seg];
+
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 2000);
+}
+
+function updatePreview() {
+  // Reset state when config changes
+  document.getElementById('genStatus').textContent = '';
+  document.getElementById('genStatus').className = 'gen-status';
+}
+
+// ===== QUADRANT CHART (Pillar 1) =====
+(function(){
+  const el = document.getElementById('quadrantChart');
+  if (!el) return;
+  window.__charts.quadrant = new Chart(el.getContext('2d'), {
+    type:'scatter',
+    data:{ datasets:[
+      { label:'High Capacity / Low Realization', backgroundColor:'rgba(153,27,27,0.65)', pointRadius:7,
+        data:[{x:2400,y:0.05},{x:1800,y:0.12},{x:3200,y:0.08},{x:1500,y:0.18},{x:2100,y:0.09},{x:2800,y:0.14},{x:1900,y:0.21},{x:2600,y:0.06},{x:1700,y:0.16},{x:2300,y:0.11}]},
+      { label:'High Capacity / Realized', backgroundColor:'rgba(30,58,138,0.65)', pointRadius:7,
+        data:[{x:1800,y:1.4},{x:2200,y:1.1},{x:1600,y:1.8},{x:2500,y:0.9},{x:1900,y:1.6},{x:2100,y:1.3}]},
+      { label:'Modest Capacity / High Generosity', backgroundColor:'rgba(234,179,8,0.75)', pointRadius:7,
+        data:[{x:300,y:3.2},{x:450,y:2.8},{x:280,y:4.1},{x:520,y:2.4},{x:380,y:3.5},{x:240,y:4.8},{x:410,y:2.9},{x:330,y:3.7}]},
+      { label:'Standard', backgroundColor:'rgba(91,33,182,0.45)', pointRadius:5,
+        data:[{x:600,y:0.8},{x:750,y:1.0},{x:900,y:0.6},{x:550,y:1.2},{x:680,y:0.9},{x:820,y:0.7},{x:720,y:1.1},{x:640,y:0.85},{x:580,y:1.0},{x:760,y:0.75}]}
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:14, font:{ family:"'DM Sans'", size:11 } } },
+        tooltip:{ callbacks:{ label:(c)=>`Capacity $${c.parsed.x}K · Giving ${c.parsed.y}%` } } },
+      scales:{
+        x:{ title:{ display:true, text:'Modeled Wealth Capacity ($K)', font:{ family:"'DM Sans'", size:11 } }, ticks:{ font:{ family:"'DM Sans'" }, color:'#8a90ad', callback:v=>'$'+v+'K' }, grid:{ color:'#f0f2f8' } },
+        y:{ title:{ display:true, text:'Giving as % of Capacity', font:{ family:"'DM Sans'", size:11 } }, ticks:{ font:{ family:"'DM Sans'" }, color:'#8a90ad', callback:v=>v+'%' }, grid:{ color:'#f0f2f8' } }
+      }
+    }
+  });
+})();
+
+// ===== LITURGICAL CHART (Pillar 2) =====
+(function(){
+  const el = document.getElementById('liturgicalChart');
+  if (!el) return;
+  const sc = { advent:'#5b21b6', christmas:'#eab308', lent:'#991b1b', easter:'#1e3a8a', ordinary:'#15803d', pentecost:'#b45309' };
+  window.__charts.liturgical = new Chart(el.getContext('2d'), {
+    type:'bar',
+    data:{
+      labels:["St. Mary's","Cathedral Basilica","St. Joseph's","Sacred Heart","Holy Trinity","St. Patrick's"],
+      datasets:[
+        { label:'Advent',        data:[42,68,38,35,44,40],   backgroundColor:sc.advent },
+        { label:'Christmas',     data:[58,142,52,38,61,55],  backgroundColor:sc.christmas },
+        { label:'Lent',          data:[186,71,64,36,72,68],  backgroundColor:sc.lent },
+        { label:'Easter',        data:[78,89,71,37,69,74],   backgroundColor:sc.easter },
+        { label:'Ordinary Time', data:[62,84,58,36,58,61],   backgroundColor:sc.ordinary },
+        { label:'Pentecost',     data:[38,52,41,35,42,39],   backgroundColor:sc.pentecost }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:12, padding:14, font:{ family:"'DM Sans'", size:11 } } },
+        tooltip:{ callbacks:{ label:(c)=>`${c.dataset.label}: $${c.parsed.y}K` } } },
+      scales:{
+        x:{ stacked:true, ticks:{ font:{ family:"'DM Sans'", size:11 }, color:'#8a90ad' }, grid:{ display:false } },
+        y:{ stacked:true, ticks:{ font:{ family:"'DM Sans'", size:11 }, color:'#8a90ad', callback:v=>'$'+v+'K' }, grid:{ color:'#f0f2f8' } }
+      }
+    }
+  });
+})();
+
+// ===== AI COPILOT SIMULATION =====
+const copilotResponses = {
+  visit:     { text:"<strong>Top 3 for personal outreach this week:</strong> (1) Margaret &amp; Robert Chen — spouse passed Q3, memorial giving opportunity, projected $18K churn if no contact. (2) Dr. James Whitfield — $2.4M modeled capacity, 14-month lapsed, Bishop call recommended, +$42K lift potential. (3) William &amp; Elena Park — liquidity event detected, capacity revised +340%. Full ranked queue on the <strong>Relationships</strong> tab.", tab:"relationships" },
+  lent:      { text:"<strong>Lent is your highest-leverage season.</strong> St. Mary's shows a 3.2x giving lift during Lent versus baseline — the strongest seasonal signal in the diocese. Cathedral Basilica peaks at Christmas instead (2.1x). Re-timing FY26 asks projects <strong>+$54K incremental</strong>. See full breakdown on the <strong>Liturgical Seasons</strong> tab.", tab:"seasons" },
+  capacity:  { text:"<strong>47 donors</strong> sit in the high-capacity / low-realization quadrant — giving under 0.4% of modeled wealth capacity. The top 10 alone represent <strong>$312K of untapped FY26 potential</strong>. See the Capacity vs. Generosity chart on the <strong>Donor Motivation</strong> tab.", tab:"motivation" },
+  motivation:{ text:"<strong>Faithful Stewards are driven primarily by Legacy &amp; Remembrance</strong> (94% model confidence). This driver has grown 23% YoY as the cohort ages. Recommended ask framing: memorial naming opportunities and planned-giving conversations. Full six-segment breakdown on the <strong>Donor Motivation</strong> tab.", tab:"motivation" }
+};
+const copilotInput = document.getElementById('copilotInput');
+const copilotResp = document.getElementById('copilotResponse');
+function runCopilot(key){
+  const r = copilotResponses[key]; if (!r) return;
+  copilotResp.innerHTML = r.text; copilotResp.classList.add('active');
+  if (r.tab) setTimeout(()=>{ const t=document.querySelector('[data-tab="'+r.tab+'"]'); if (t) t.click(); }, 900);
+}
+function matchQuery(q){
+  q = q.toLowerCase();
+  if (/visit|outreach|who|touch|this week|call/.test(q)) return 'visit';
+  if (/lent|season|christmas|easter|advent|liturg|timing/.test(q)) return 'lent';
+  if (/capacity|wealth|lapsed|untapped|rich/.test(q)) return 'capacity';
+  if (/motivat|driver|why|stewards|growers|segment/.test(q)) return 'motivation';
+  return null;
+}
+if (copilotInput) {
+  copilotInput.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter') {
+      const k = matchQuery(copilotInput.value);
+      if (k) runCopilot(k);
+      else { copilotResp.innerHTML = "<strong>No match in demo dataset.</strong> Try a suggested query below. Phase 2 will connect to a local LLM via Ollama/Tailscale for open-ended questions."; copilotResp.classList.add('active'); }
+    }
+  });
+}
+document.querySelectorAll('.copilot-chip').forEach(chip => {
+  chip.addEventListener('click', ()=>{ copilotInput.value = chip.textContent; runCopilot(chip.dataset.q); });
+});
+
+// ===== MODAL SYSTEM =====
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalFooter = document.getElementById('modalFooter');
+function openModal(title, bodyHtml, footerHtml){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = bodyHtml;
+  modalFooter.innerHTML = footerHtml || '<button class="modal-btn" onclick="closeModal()">Close</button>';
+  modalBackdrop.classList.add('active');
+}
+function closeModal(){ modalBackdrop.classList.remove('active'); }
+modalBackdrop.addEventListener('click', (e)=>{ if (e.target===modalBackdrop) closeModal(); });
+document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') closeModal(); });
+
+// ===== MOTIVATION CARD DETAILS =====
+const motivationDetail = {
+  "Legacy & Remembrance":{c:94,s:"Faithful Stewards",n:142,a:"$1,840",f:["Age 65+ (weight 0.31)","Prior bequest inquiry (0.24)","Memorial Mass sponsorship history (0.19)","Widow/widower status (0.14)"],d:[["Margaret &amp; Robert Chen","$12,400 FY25"],["Patricia O'Brien","$8,200 FY25"],["Caruso Estate","$45,000 bequest"]],t:"Grown 23% YoY as the Faithful Stewards cohort ages. Post-pandemic inflection Q2 2023.",r:"Front-load planned-giving conversations. Offer memorial naming opportunities tied to chapel restoration."},
+  "Parish School Support":{c:88,s:"Consistent Growers",n:98,a:"$680",f:["Children enrolled K-12 (0.35)","Parish school volunteer (0.22)","Tuition assistance history (0.18)"],d:[["The Hendricks Family","$4,200 FY25"],["Dr. Maria Alvarez","$3,600 FY25"],["Kowalski Family","$2,800 FY25"]],t:"Stable segment with tight correlation to parish school enrollment.",r:"Tie ask amounts directly to tuition assistance outcomes. 'Your gift sends N children to Catholic school.'"},
+  "Sacramental Milestones":{c:91,s:"Sacramental Families",n:76,a:"$420",f:["Recent First Communion (0.29)","Upcoming Confirmation (0.25)","Young children in household (0.21)"],d:[["The Delgado Family","$1,800 FY25"],["Nguyen Family","$1,500 FY25"],["Sofia Martinez","$1,200 FY25"]],t:"Predictable spike in giving during April-May sacramental windows.",r:"Time asks to child's sacramental calendar. Reference the specific upcoming event."},
+  "Catholic Charities &amp; Outreach":{c:89,s:"Social Justice Donors",n:64,a:"$920",f:["Food pantry volunteer (0.32)","CCHD donation history (0.27)","Refugee ministry engagement (0.18)"],d:[["James Whitfield","$3,400 FY25"],["Kellerman Trust","$12,000 grant"],["Sr. Elizabeth's network","$6,800 pooled"]],t:"Most responsive to outreach framing. Strong negative response to building/capital asks.",r:"Lead with food pantry, refugee resettlement, prison ministry. Avoid capital campaign framing."},
+  "Vocations &amp; Priestly Formation":{c:86,s:"Eucharistic Devotees",n:52,a:"$1,240",f:["Daily Mass attendance (0.34)","Adoration hour sponsor (0.26)","Seminary support history (0.19)"],d:[["Thomas Caruso","$6,200 FY25"],["The Brennan Family","$4,400 FY25"],["Anonymous Benefactor","$15,000 FY25"]],t:"Small but exceptionally responsive. 89% response rate to bishop's personal letters.",r:"Frame around seminarian sponsorship and Eucharistic Revival. Bishop should personally sign."},
+  "Pastoral Reconnection Needed":{c:78,s:"At-Risk Lapsers",n:55,a:"$310",f:["Mass attendance drop >60% (0.38)","Email disengagement (0.22)","Parish friction signal (0.18)"],d:[["Anthony Russo","Lapsed 14mo"],["Katherine Reilly","Lapsed 8mo"],["The Donnelly Family","Lapsed 11mo"]],t:"Motivation signal is weak because the relationship itself is degraded. Financial ask is premature.",r:"NO financial ask this cycle. Pastoral home visit only. Rebuild relationship first."}
+};
+document.querySelectorAll('.motivation-card').forEach(card => {
+  card.addEventListener('click', ()=>{
+    const key = card.querySelector('.motivation-driver').innerHTML.trim();
+    const m = motivationDetail[key]; if (!m) return;
+    const feats = m.f.map(x=>`<li>${x}</li>`).join('');
+    const dnrs = m.d.map(x=>`<li><strong>${x[0]}</strong> · ${x[1]}</li>`).join('');
+    openModal(card.querySelector('.motivation-driver').textContent.trim(),
+      `<dl class="kv"><dt>Segment</dt><dd>${m.s}</dd><dt>Donors in segment</dt><dd>${m.n}</dd><dt>Avg annual gift</dt><dd>${m.a}</dd><dt>Model confidence</dt><dd>${m.c}%</dd></dl>
+      <h4>Top model features</h4><ul>${feats}</ul>
+      <h4>Representative donors</h4><ul>${dnrs}</ul>
+      <h4>YoY trend</h4><p>${m.t}</p>
+      <h4>AI recommendation</h4><p><strong>${m.r}</strong></p>`,
+      '<button class="modal-btn" onclick="closeModal()">Close</button><button class="modal-btn primary" onclick="closeModal()">Export Segment</button>');
+  });
+});
+
+// ===== DONOR ROW DETAILS =====
+const donorDetail = {
+  "Margaret &amp; Robert Chen":{p:"St. Mary's",a:"1420 Oak Ridge Lane, Savannah, GA 31406",ph:"(912) 555-0142",em:"mchen@example.com",fam:"Robert (deceased Q3 2025), 2 adult children: David (Atlanta), Sarah (parish member)",emp:"Retired — former VP, Regions Bank",cap:"$420K modeled",g:"$12,400 FY25, $14,800 FY24, $13,200 FY23",sac:"Parishioners since 1998. Robert served on Finance Council 2010-2018.",n:"Robert's funeral Mass was Oct 14. Memorial giving opportunity detected."},
+  "Dr. James Whitfield":{p:"Cathedral Basilica",a:"88 Bayshore Drive, Savannah, GA 31411",ph:"(912) 555-0287",em:"jwhitfield@example.com",fam:"Wife Caroline, 3 adult children",emp:"Whitfield Orthopedics (owner, 12 employees)",cap:"$2.4M modeled (real estate + practice valuation)",g:"$1,200 FY25, $8,500 FY22 (last engaged)",sac:"Baptized Cathedral 1971. Daughter married at Cathedral 2019.",n:"Lapsed 14 months. Model suggests Bishop-level outreach with vocations framing."},
+  "The Delgado Family":{p:"St. Joseph's",a:"2201 Magnolia Court, Savannah, GA 31405",ph:"(912) 555-0318",em:"delgado.family@example.com",fam:"Carlos (father), Elena (mother), Sofia (8), Mateo (5)",emp:"Carlos: Gulfstream Aerospace (engineer). Elena: part-time teacher.",cap:"$85K modeled",g:"$1,800 FY25, $1,650 FY24",sac:"Sofia's First Communion scheduled May 4, 2026.",n:"Historically 2.8x giving lift in sacramental months. Time outreach to April 15."},
+  "Patricia O'Brien":{p:"Holy Trinity",a:"45 Wilmington Island Rd, Savannah, GA 31410",ph:"(912) 555-0401",em:"pobrien@example.com",fam:"Widow. No living children. Niece (Ellen Duffy) is sole relative.",emp:"Retired — former principal, Blessed Sacrament School",cap:"$1.1M (home + retirement accounts)",g:"$2,200 FY25, $2,100 FY24, $2,400 FY23",sac:"Parishioner 47 years. Former parish school principal.",n:"Bequest probability 73%. No estate conversation on record yet."},
+  "Anthony Russo":{p:"St. Anne's",a:"703 Habersham St, Savannah, GA 31401",ph:"(912) 555-0529",em:"arusso@example.com",fam:"Divorced 2024. 1 child (custody shared).",emp:"Russo Landscape Services (owner)",cap:"$180K modeled",g:"Lapsed 6 months. $340 FY25 partial, $2,100 FY24",sac:"Parishioner 12 years. Son's First Communion 2023.",n:"Engagement collapse coincides with divorce. Pastoral visit needed — NOT a financial ask."},
+  "William &amp; Elena Park":{p:"Cathedral Basilica",a:"12 Harbor View Terrace, Savannah, GA 31411",ph:"(912) 555-0612",em:"wpark@example.com",fam:"Married 14 years. No children.",emp:"William: sold Park Logistics Inc. Q2 2025 for est. $28M. Elena: physician.",cap:"Revised +340% post-liquidity event ($4.8M modeled)",g:"$8,200 FY25, $6,400 FY24",sac:"Married at Cathedral 2011.",n:"Liquidity event detected via public records. Schedule Bishop lunch ASAP."},
+  "The Murphy Trust":{p:"St. Patrick's",a:"c/o Coastal Trust Services, 220 E Bay St, Savannah, GA 31401",ph:"(912) 555-0744",em:"grants@murphytrust.example",fam:"Private family foundation. Trustees: Matthew Murphy, Kate Murphy-Liu, Thomas Murphy.",emp:"Trust — $42M AUM",cap:"$50-250K annual grant range",g:"$50,000 FY25 (tuition assistance)",sac:"N/A — institutional donor.",n:"Grant cycle opens April 30. Historical alignment: Catholic education, food security."},
+  "Thomas Caruso":{p:"Sacred Heart",a:"18 Tybee Island Rd, Savannah, GA 31328",ph:"(912) 555-0859",em:"tcaruso@example.com",fam:"Widower. 4 adult children, 9 grandchildren.",emp:"Retired — former owner, Caruso Construction",cap:"$680K modeled",g:"$6,200 FY25, $6,000 FY24, $5,800 FY23",sac:"Daily Mass attendee. Knights of Columbus 4th degree.",n:"Exceptionally high response rate to bishop's personal letters. 12-yr consistent giver."}
+};
+document.querySelectorAll('.donor-row').forEach(row => {
+  row.addEventListener('click', ()=>{
+    const nameEl = row.querySelector('.donor-name'); if (!nameEl) return;
+    const key = nameEl.innerHTML.trim();
+    const d = donorDetail[key]; if (!d) return;
+    openModal(nameEl.textContent.trim(),
+      `<dl class="kv">
+        <dt>Parish</dt><dd>${d.p}</dd>
+        <dt>Address</dt><dd>${d.a}</dd>
+        <dt>Phone</dt><dd>${d.ph}</dd>
+        <dt>Email</dt><dd>${d.em}</dd>
+        <dt>Family</dt><dd>${d.fam}</dd>
+        <dt>Employer</dt><dd>${d.emp}</dd>
+        <dt>Modeled capacity</dt><dd>${d.cap}</dd>
+        <dt>Giving history</dt><dd>${d.g}</dd>
+        <dt>Sacramental history</dt><dd>${d.sac}</dd>
+      </dl>
+      <h4>Pastoral notes</h4><p>${d.n}</p>`,
+      '<button class="modal-btn" onclick="closeModal()">Close</button><button class="modal-btn primary" onclick="closeModal()">Log Outreach</button>');
+  });
+});
+
+// ===== PARISH & DEANERY DETAILS =====
+const parishDetail = {
+  cathedral:{n:"Cathedral Basilica",d:"Central",dn:124,g:"$98K",tr:"+8%",pr:"$92K",nt:"Anchor parish. Strong at Christmas (2.1x lift). Hosts diocesan events."},
+  stmarys:{n:"St. Mary's",d:"North",dn:76,g:"$64K",tr:"+12%",pr:"$58K",nt:"3.2x Lenten lift — strongest seasonal signal in the diocese. Front-load FY26 asks to Ash Wednesday window."},
+  stjosephs:{n:"St. Joseph's",d:"Central",dn:68,g:"$52K",tr:"+4%",pr:"$50K",nt:"Sacramental-family heavy. Strong First Communion and Confirmation windows."},
+  sacredheart:{n:"Sacred Heart",d:"South",dn:54,g:"$38K",tr:"−2%",pr:"$39K",nt:"No seasonal pattern. Eucharistic devotee segment concentrated here."},
+  holytrinity:{n:"Holy Trinity",d:"North",dn:48,g:"$42K",tr:"+6%",pr:"$40K",nt:"Aging cohort. Legacy & bequest segment strongest here."},
+  stpatricks:{n:"St. Patrick's",d:"Central",dn:58,g:"$46K",tr:"+5%",pr:"$44K",nt:"Hosts Murphy Trust relationship. Grant cycle alignment April."},
+  stannes:{n:"St. Anne's",d:"North",dn:32,g:"$24K",tr:"−9%",pr:"$26K",nt:"At-risk parish. Mass attendance down 14% YoY. Pastoral review recommended."},
+  stfrancis:{n:"St. Francis",d:"South",dn:27,g:"$21K",tr:"+1%",pr:"$20K",nt:"Small but stable. Social justice donor base."}
+};
+document.getElementById('viewParishBtn').addEventListener('click', ()=>{
+  const k = document.getElementById('parishFilter').value;
+  if (k === 'all') {
+    openModal("Diocese-Wide View",
+      `<p>Showing aggregate data across all 8 parishes in 3 deaneries. Select an individual parish to drill into parish-specific metrics, pastoral notes, and seasonal patterns.</p>
+       <h4>Diocesan totals</h4>
+       <dl class="kv">
+         <dt>Active donors</dt><dd>487</dd>
+         <dt>FY26 goal</dt><dd>$385,000</dd>
+         <dt>Predicted total</dt><dd>$411,420 (+6.9%)</dd>
+         <dt>At-risk parishes</dt><dd>2 of 8 (St. Anne's, Sacred Heart)</dd>
+       </dl>`);
+    return;
+  }
+  const p = parishDetail[k];
+  openModal(p.n,
+    `<dl class="kv">
+      <dt>Deanery</dt><dd>${p.d}</dd>
+      <dt>Active donors</dt><dd>${p.dn}</dd>
+      <dt>FY26 goal</dt><dd>${p.g}</dd>
+      <dt>Prior year actual</dt><dd>${p.pr}</dd>
+      <dt>YoY trend</dt><dd>${p.tr}</dd>
+    </dl>
+    <h4>AI pastoral notes</h4><p>${p.nt}</p>`,
+    '<button class="modal-btn" onclick="closeModal()">Close</button><button class="modal-btn primary" onclick="closeModal()">Open Parish Dashboard</button>');
+});
+document.getElementById('deaneryFilter').addEventListener('change', (e)=>{
+  const d = e.target.value;
+  const map = { north:['stmarys','holytrinity','stannes'], central:['cathedral','stjosephs','stpatricks'], south:['sacredheart','stfrancis'] };
+  const sel = document.getElementById('parishFilter');
+  Array.from(sel.options).forEach(opt => {
+    if (opt.value === 'all') { opt.hidden = false; return; }
+    opt.hidden = (d !== 'all' && !map[d].includes(opt.value));
+  });
+  sel.value = 'all';
+});
+
+// ===== PASTOR REVIEW WORKFLOW =====
+document.querySelectorAll('button').forEach(btn => {
+  const txt = (btn.textContent || '').trim().toLowerCase();
+  if (txt.includes('pastor review') || txt === 'submit for pastor review' || txt.includes('submit for review')) {
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      openModal("Pastor Review · Fr. Michael Dunne",
+        `<p>The generated communication is ready for pastoral review. Fr. Dunne can approve and queue for send, request edits, or deny with feedback to the stewardship office.</p>
+        <h4>Generated message preview</h4>
+        <p style="background:var(--surface);border-left:3px solid var(--gold);padding:12px 14px;border-radius:6px;font-style:italic;">"Dear Margaret, As we approach the holy season of Lent, I wanted to reach out personally to thank you for your 22 years of faithful stewardship of St. Mary's. Your continued generosity has touched countless lives..."</p>
+        <h4>Edit message</h4>
+        <textarea class="modal-edit-area" id="editArea">Dear Margaret, As we approach the holy season of Lent, I wanted to reach out personally to thank you for your 22 years of faithful stewardship of St. Mary's...</textarea>`,
+        `<button class="modal-btn danger" onclick="reviewAction('deny')">Deny &amp; Send Back</button>
+         <button class="modal-btn" onclick="reviewAction('edit')">Save Edits</button>
+         <button class="modal-btn primary" onclick="reviewAction('approve')">Approve &amp; Queue</button>`);
+    });
+  }
+});
+function reviewAction(action){
+  const m = {
+    approve:{t:"✓ Approved &amp; Queued",b:"<p>Message has been approved and added to the send queue. It will be delivered during the next scheduled send window (Tuesday 9:00 AM).</p><p><strong>Recipients: 142 donors in the Faithful Stewards segment.</strong></p>"},
+    edit:{t:"Edits Saved",b:"<p>Your edits have been saved as a draft. The message will remain in review until final approval.</p>"},
+    deny:{t:"Denied &amp; Returned",b:"<p>The message has been returned to the stewardship office with your feedback. They will revise and resubmit for review.</p>"}
+  }[action];
+  openModal(m.t, m.b, '<button class="modal-btn primary" onclick="closeModal()">Done</button>');
+}
+
+</script>
+
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalEl">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detail</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+</body>
+</html>
